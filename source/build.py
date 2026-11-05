@@ -221,12 +221,13 @@ def sources(g):
 """
 
 
-TOC = [("h-compare", "Le comparatif"), ("h-products", "Les modèles en détail"), ("h-criteria", "Les critères"),
+TOC = [("h-budget", "Petit budget"), ("h-compare", "Le comparatif"), ("h-products", "Les modèles en détail"), ("h-criteria", "Les critères"),
        ("h-mistakes", "Les erreurs à éviter"), ("h-faq", "Questions fréquentes"), ("h-sources", "Sources")]
 
 
 def toc(g):
-    items = "".join(f'<li><a href="#{a}">{t}</a></li>' for a, t in TOC if a != "h-sources" or sources(g))
+    items = "".join(f'<li><a href="#{a}">{t}</a></li>' for a, t in TOC
+                    if (a != "h-sources" or sources(g)) and (a != "h-budget" or BUDGET.get(g["slug"])))
     return f'<nav class="toc" aria-label="Sommaire"><span class="eyebrow">Sommaire</span><ol>{items}</ol></nav>'
 
 
@@ -251,6 +252,43 @@ def photo(p, size=640, cls="ph", eager=False):
 
 def visual(g, p, eager=False):
     return photo(p, eager=eager) or art(g["slug"])
+
+
+# Choix « petit budget » par guide (moins de 50 €, de 50 à 100 €), dans budget.json.
+_BJ = os.path.join(os.path.dirname(os.path.abspath(__file__)), "budget.json")
+BUDGET = json.load(open(_BJ)) if os.path.exists(_BJ) else {}
+BANDS = [("b50", "note50", "Moins de 50 €"), ("b100", "note100", "De 50 à 100 €")]
+
+
+def budget_card(g, p, label):
+    pros = "".join(f"<li>{e(x)}</li>" for x in p["pros"][:2])
+    return f"""<article class="shop"{tint(g["cat"])}>
+  <div class="shop-vis{" has-ph" if photo(p) else ""}">{visual(g, p)}<span class="shop-badge">{e(label)}</span></div>
+  <div class="shop-body">
+    <h3 translate="no">{e(p["name"])}</h3>
+    <p class="shop-for">Pour {e(p["for"])}</p>
+    <ul class="shop-pros">{pros}</ul>
+    <p class="shop-con">À savoir : {e(p["cons"][0])}</p>
+    <div class="shop-foot"><span class="shop-price" title="Prix habituellement constaté">{e(label)}</span>{buy(p, 0, "btn btn-main", "Voir sur Amazon")}</div>
+  </div>
+</article>"""
+
+
+def budget_section(g):
+    b = BUDGET.get(g["slug"])
+    if not b:
+        return ""
+    cols = ""
+    for key, note, label in BANDS:
+        items = [p for p in b.get(key, []) if photo(p)]
+        body = "".join(budget_card(g, p, label) for p in items) or f'<p class="budget-note">{e(b.get(note) or "Pas de modèle fiable à ce prix pour le moment.")}</p>'
+        cols += f'<div class="budget-band"><h3>{label}</h3><div class="shops">{body}</div></div>'
+    return f"""
+  <section class="block budget" aria-labelledby="h-budget">
+    <div class="vitrine-head"><h2 id="h-budget">Petit budget : nos choix à moins de 100 €</h2><a href="#h-compare">Voir tous les modèles ↓</a></div>
+    <div class="budget-grid">{cols}</div>
+    <p class="disclose">Prix habituellement constatés sur Amazon.fr, qui peuvent varier : vérifiez le prix affiché avant d'acheter.</p>
+  </section>"""
 
 
 def shop_card(g, p, i, page=""):
@@ -340,6 +378,7 @@ def guide_page(g):
     <div class="shops">{"".join(shop_card(g, p, i) for i, p in enumerate(g["products"][:3]))}</div>
     <p class="disclose">Liens affiliés : si vous achetez via eux, nous touchons une petite commission, sans surcoût pour vous. Cela ne change ni l'ordre ni l'avis.</p>
   </section>
+{budget_section(g)}
   {toc(g)}
 
 
@@ -827,6 +866,13 @@ nav.cats a{transition:background-color var(--t1) var(--ease),color var(--t1) var
 /* Vitrine produits (6 oct. 2026) */
 main .hero.has-art h1{font-size:clamp(1.8rem,3.6vw,2.5rem);max-width:26ch}
 .hero.has-art{padding-bottom:12px}
+.budget{display:grid;gap:16px}
+.budget-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:22px}
+.budget-band h3{font-size:1rem;margin:0 0 10px;color:var(--c)}
+.budget-band .shops{grid-template-columns:1fr}
+.budget-note{margin:0;padding:16px;border:1px dashed var(--line);border-radius:16px;color:var(--muted);font-size:.92rem}
+.shop-con{font-size:.82rem;color:var(--muted);margin:0}
+.budget .disclose{font-size:.78rem;color:var(--muted)}
 .vitrine{display:grid;gap:16px;margin:28px 0 40px}
 .vitrine-head{display:flex;flex-wrap:wrap;gap:8px 20px;align-items:baseline;justify-content:space-between}
 .vitrine-head h2{font-size:clamp(1.3rem,2.4vw,1.7rem);letter-spacing:-.02em}

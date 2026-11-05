@@ -1,0 +1,1411 @@
+{
+ "robot-aspirateur-laveur": {
+  "b50": [],
+  "note50": "Aucun robot aspirateur laveur fiable d'une marque sérieuse sous 50 €.",
+  "b100": [],
+  "note100": "Les robots qui aspirent et lavent chez les marques sérieuses (iRobot, Rowenta, Roborock) se vendent en général au-dessus de 100 € ; rien de fiable trouvé dans cette tranche."
+ },
+ "robot-tondeuse": {
+  "b50": [],
+  "note50": "Aucun robot tondeuse n'existe sous 50 €.",
+  "b100": [],
+  "note100": "Un vrai robot tondeuse sous 100 € n'existe pas : les premiers modèles fiables démarrent autour de 400 €."
+ },
+ "robot-piscine": {
+  "b50": [],
+  "note50": "Aucun robot de piscine sérieux sous 50 €.",
+  "b100": [
+   {
+    "name": "Intex 28620EP",
+    "brand": "Intex",
+    "for": "une petite piscine hors-sol ou un spa, pour aspirer le fond sans tuyau ni pompe.",
+    "pros": [
+     "Sans fil : pas besoin de le brancher au filtre",
+     "Rechargeable en USB",
+     "Deux têtes de brosse fournies"
+    ],
+    "cons": [
+     "Ce n'est pas un robot : il faut le passer soi-même",
+     "Pensé pour les petits bassins"
+    ],
+    "specs": [
+     [
+      "Batterie",
+      "Ni-MH rechargeable"
+     ],
+     [
+      "Manche",
+      "Aluminium télescopique d'environ 2,4 m"
+     ],
+     [
+      "Bassin conseillé",
+      "Hors-sol jusqu'à 5,5 m de diamètre et spas"
+     ]
+    ]
+   }
+  ],
+  "note100": ""
+ },
+ "robot-lave-vitres": {
+  "b50": [
+   {
+    "name": "Kärcher WV 1 Plus",
+    "brand": "Kärcher",
+    "for": "des vitres sans traces sans sortir le seau et la raclette.",
+    "pros": [
+     "Aspire l'eau sale d'un seul geste",
+     "Compact et léger",
+     "Pulvérisateur et microfibre fournis"
+    ],
+    "cons": [
+     "Ce n'est pas un robot : on le passe à la main",
+     "Modèle d'entrée de gamme, autonomie limitée"
+    ],
+    "specs": [
+     [
+      "Référence",
+      "1.633-203.0"
+     ],
+     [
+      "Type",
+      "Nettoyeur de vitres à batterie"
+     ]
+    ]
+   }
+  ],
+  "note50": "",
+  "b100": [
+   {
+    "name": "Kärcher WV 6 Plus",
+    "brand": "Kärcher",
+    "for": "une maison avec beaucoup de vitres, pour tout faire sur une seule charge.",
+    "pros": [
+     "100 min d'autonomie",
+     "Raclette de 28 cm interchangeable",
+     "Aspire l'eau sale, pas de coulures"
+    ],
+    "cons": [
+     "On le passe à la main",
+     "Recharge longue (près de 3 h)"
+    ],
+    "specs": [
+     [
+      "Autonomie",
+      "100 min"
+     ],
+     [
+      "Réservoir eau sale",
+      "150 ml"
+     ],
+     [
+      "Largeur de raclette",
+      "280 mm"
+     ],
+     [
+      "Poids",
+      "0,8 kg"
+     ],
+     [
+      "Temps de charge",
+      "170 min"
+     ]
+    ]
+   }
+  ],
+  "note100": ""
+ },
+ "seche-linge-pompe-a-chaleur": {
+  "b50": [],
+  "note50": "Aucun sèche-linge sous 50 €.",
+  "b100": [],
+  "note100": "Aucun sèche-linge pompe à chaleur sous 100 € : les premiers prix démarrent autour de 400 €."
+ },
+ "mini-lave-vaisselle": {
+  "b50": [],
+  "note50": "Aucun lave-vaisselle sous 50 €.",
+  "b100": [],
+  "note100": "Aucun mini lave-vaisselle fiable sous 100 € : les modèles de table démarrent autour de 200 €."
+ },
+ "litiere-autonettoyante": {
+  "b50": [
+   {
+    "name": "Litter Genie Easy Roll",
+    "brand": "Litter Genie",
+    "for": "ne plus descendre la poubelle à chaque ramassage de la litière.",
+    "pros": [
+     "Garde les odeurs enfermées",
+     "Une semaine de déchets pour un chat",
+     "Pelle et support fournis"
+    ],
+    "cons": [
+     "Ce n'est pas une litière automatique : il faut toujours ramasser",
+     "Recharges à racheter"
+    ],
+    "specs": [
+     [
+      "Capacité",
+      "Jusqu'à 8 jours de litière pour un chat"
+     ],
+     [
+      "Recharge",
+      "24 sacs, jusqu'à 6 mois pour un chat"
+     ],
+     [
+      "Fourni",
+      "Poubelle, recharge, pelle et support"
+     ]
+    ]
+   }
+  ],
+  "note50": "",
+  "b100": [],
+  "note100": "Aucune litière autonettoyante fiable sous 100 € : les modèles sérieux démarrent autour de 250 €."
+ },
+ "distributeur-croquettes-automatique": {
+  "b50": [
+   {
+    "name": "PetSafe Eatwell 5 repas",
+    "brand": "PetSafe",
+    "for": "un chat ou un petit chien, pour servir cinq repas à heure fixe sans application.",
+    "pros": [
+     "Simple, sans Wi-Fi ni application",
+     "Fonctionne sur piles, même en cas de coupure",
+     "Plateau au lave-vaisselle"
+    ],
+    "cons": [
+     "Une portion par compartiment seulement",
+     "Pas d'alerte à distance"
+    ],
+    "specs": [
+     [
+      "Repas",
+      "5"
+     ],
+     [
+      "Capacité",
+      "1 tasse par compartiment"
+     ],
+     [
+      "Alimentation",
+      "4 piles D (non fournies)"
+     ],
+     [
+      "Entretien",
+      "Lave-vaisselle, panier du haut"
+     ]
+    ]
+   }
+  ],
+  "note50": "",
+  "b100": [
+   {
+    "name": "PETLIBRO Granary WiFi 5 L",
+    "brand": "PETLIBRO",
+    "for": "partir un week-end en gardant la main sur les repas depuis son téléphone.",
+    "pros": [
+     "Pilotage depuis l'application",
+     "Réservoir de 5 L",
+     "Piles de secours en cas de coupure"
+    ],
+    "cons": [
+     "Wi-Fi coupé quand il tourne sur piles",
+     "Pas de caméra"
+    ],
+    "specs": [
+     [
+      "Capacité",
+      "5 L de croquettes"
+     ],
+     [
+      "Repas",
+      "Jusqu'à 10 par jour"
+     ],
+     [
+      "Wi-Fi",
+      "2,4 GHz et 5 GHz"
+     ],
+     [
+      "Gamelle",
+      "Acier inoxydable"
+     ],
+     [
+      "Secours",
+      "3 piles D (non fournies)"
+     ]
+    ]
+   }
+  ],
+  "note100": ""
+ },
+ "aspirateur-balai-sans-fil": {
+  "b50": [],
+  "note50": "Aucun aspirateur balai sans fil fiable de marque sérieuse sous 50 €.",
+  "b100": [],
+  "note100": "Les aspirateurs balais sans fil des marques sérieuses (Bosch, Rowenta, Philips) se vendent en général entre 110 et 150 € ; rien de fiable trouvé sous 100 €."
+ },
+ "aspirateur-laveur-sans-fil": {
+  "b50": [],
+  "note50": "Aucun aspirateur laveur sans fil fiable sous 50 €.",
+  "b100": [],
+  "note100": "Prix souvent autour de 100 € : à surveiller, il dépasse parfois la tranche."
+ },
+ "airfryer": {
+  "b50": [],
+  "note50": "Les airfryers de marque sérieuse qui ne sont pas déjà sur le site se vendent en général au-dessus de 50 €.",
+  "b100": [
+   {
+    "name": "Instant Vortex Mini",
+    "brand": "Instant",
+    "for": "une personne seule ou un couple, pour une petite cuisine.",
+    "pros": [
+     "Très compact",
+     "4 programmes simples",
+     "Panier facile à laver"
+    ],
+    "cons": [
+     "2 L : trop petit pour une famille",
+     "Un seul panier"
+    ],
+    "specs": [
+     [
+      "Capacité",
+      "2 L"
+     ],
+     [
+      "Puissance",
+      "1300 W"
+     ],
+     [
+      "Programmes",
+      "Air fry, cuisson, rôtir, réchauffer"
+     ]
+    ]
+   }
+  ],
+  "note100": ""
+ },
+ "robot-cuiseur": {
+  "b50": [],
+  "note50": "Aucun robot cuiseur multifonction sérieux sous 50 €.",
+  "b100": [
+   {
+    "name": "Tefal Fast & Delicious CY505E10",
+    "brand": "Tefal",
+    "for": "lancer un plat le matin et le trouver prêt et chaud le soir.",
+    "pros": [
+     "Cuit sous pression, donc vite",
+     "Départ différé et maintien au chaud 24 h",
+     "Beaucoup de programmes automatiques"
+    ],
+    "cons": [
+     "Ne mixe pas et ne pèse pas comme un Thermomix",
+     "Pas d'application connectée"
+    ],
+    "specs": [
+     [
+      "Capacité",
+      "6 L (4 à 6 personnes)"
+     ],
+     [
+      "Programmes",
+      "25 automatiques + mode manuel"
+     ],
+     [
+      "Maintien au chaud",
+      "Jusqu'à 24 h"
+     ],
+     [
+      "Commande",
+      "Molette et écran LCD"
+     ]
+    ]
+   }
+  ],
+  "note100": ""
+ },
+ "defroisseur-vapeur": {
+  "b50": [
+   {
+    "name": "Rowenta Pure Pop DR2022",
+    "brand": "Rowenta",
+    "for": "rafraîchir une chemise ou une robe le matin, sans sortir la planche.",
+    "pros": [
+     "Prêt en 15 secondes",
+     "Très léger (710 g), facile à emporter en voyage",
+     "Petit prix pour une marque connue"
+    ],
+    "cons": [
+     "Petit réservoir de 70 ml : environ 4 minutes de vapeur",
+     "Moins efficace sur le coton épais"
+    ],
+    "specs": [
+     [
+      "Puissance",
+      "1300 W"
+     ],
+     [
+      "Débit vapeur",
+      "20 g/min"
+     ],
+     [
+      "Réservoir",
+      "70 ml"
+     ],
+     [
+      "Temps de chauffe",
+      "15 s"
+     ],
+     [
+      "Poids",
+      "710 g"
+     ]
+    ]
+   }
+  ],
+  "note50": "",
+  "b100": [],
+  "note100": "Pas de modèle fiable à ce prix chez une marque sérieuse pour le moment."
+ },
+ "lave-linge-sechant": {
+  "b50": [],
+  "note50": "Aucun lave-linge séchant n'existe sous 50 €, et aucun accessoire ne remplace vraiment la fonction séchage.",
+  "b100": [],
+  "note100": "Aucun lave-linge séchant sérieux sous 100 € : les premiers prix dépassent largement 300 €. Les mini-lave-linge portables vendus à ce prix ne sèchent pas le linge."
+ },
+ "fontaine-eau-chat": {
+  "b50": [
+   {
+    "name": "Catit Pixi Fontaine 2,5 L",
+    "brand": "Catit",
+    "for": "un chat qui boit peu, avec une eau filtrée qui reste fraîche plusieurs jours.",
+    "pros": [
+     "Grand réservoir de 2,5 L",
+     "Pompe silencieuse",
+     "Marque spécialiste du chat, filtres faciles à trouver"
+    ],
+    "cons": [
+     "Filtre à changer toutes les 2 à 4 semaines",
+     "Fonctionne sur secteur, donc un fil à faire passer"
+    ],
+    "specs": [
+     [
+      "Capacité",
+      "2,5 L"
+     ],
+     [
+      "Filtre",
+      "remplaçable, toutes les 2 à 4 semaines"
+     ]
+    ]
+   }
+  ],
+  "note50": "",
+  "b100": [
+   {
+    "name": "Petlibro Dockstream sans fil",
+    "brand": "Petlibro",
+    "for": "placer la fontaine où le chat préfère boire, même loin d'une prise.",
+    "pros": [
+     "Aucun câble pendant l'usage : batterie jusqu'à 30 jours",
+     "Très silencieuse (23 dB)",
+     "Filtration en 4 couches"
+    ],
+    "cons": [
+     "Batterie à recharger chaque mois",
+     "Plus chère qu'une fontaine sur secteur"
+    ],
+    "specs": [
+     [
+      "Capacité",
+      "2,5 L"
+     ],
+     [
+      "Batterie",
+      "5000 mAh, jusqu'à 30 jours"
+     ],
+     [
+      "Bruit",
+      "23 dB"
+     ],
+     [
+      "Filtration",
+      "4 couches"
+     ]
+    ]
+   }
+  ],
+  "note100": ""
+ },
+ "nettoyeur-haute-pression": {
+  "b50": [],
+  "note50": "Aucun vrai nettoyeur haute pression d'une marque sérieuse sous 50 € : les premiers Kärcher K2 commencent autour de 70 à 80 €.",
+  "b100": [
+   {
+    "name": "Kärcher K2 Universal Edition",
+    "brand": "Kärcher",
+    "for": "nettoyer de temps en temps un salon de jardin, des vélos ou une petite terrasse.",
+    "pros": [
+     "La marque de référence au prix d'entrée",
+     "Léger et facile à ranger",
+     "Assez puissant pour les petites surfaces"
+    ],
+    "cons": [
+     "Flexible court de 3 m",
+     "Lent sur une grande terrasse"
+    ],
+    "specs": [
+     [
+      "Pression",
+      "110 bars"
+     ],
+     [
+      "Débit",
+      "360 l/h"
+     ],
+     [
+      "Surface conseillée",
+      "20 m²/h"
+     ],
+     [
+      "Puissance",
+      "1400 W"
+     ],
+     [
+      "Flexible",
+      "3 m"
+     ]
+    ]
+   }
+  ],
+  "note100": ""
+ },
+ "programmateur-arrosage": {
+  "b50": [
+   {
+    "name": "Gardena FlexControl",
+    "brand": "Gardena",
+    "for": "arroser un potager ou des jardinières à heure fixe, sans application.",
+    "pros": [
+     "Se visse directement sur le robinet",
+     "Programmation simple sur écran",
+     "Jusqu'à 3 arrosages par jour"
+    ],
+    "cons": [
+     "Pile 9 V non fournie",
+     "Une seule sortie d'eau"
+    ],
+    "specs": [
+     [
+      "Durée d'arrosage",
+      "1 min à 1 h 59"
+     ],
+     [
+      "Arrosages",
+      "jusqu'à 3 par jour"
+     ],
+     [
+      "Alimentation",
+      "1 pile 9 V"
+     ],
+     [
+      "Raccord robinet",
+      "26,5 mm et 33,3 mm"
+     ]
+    ]
+   }
+  ],
+  "note50": "",
+  "b100": [
+   {
+    "name": "Gardena Bluetooth 01889-20",
+    "brand": "Gardena",
+    "for": "régler et suspendre l'arrosage depuis son téléphone, sans abonnement ni passerelle.",
+    "pros": [
+     "Réglages faciles dans l'application",
+     "Pause de plusieurs jours en un geste quand il pleut",
+     "Sécurité Safe Stop si la pile est faible"
+    ],
+    "cons": [
+     "Bluetooth : il faut être à moins de 10 m",
+     "Pas de commande à distance hors de la maison"
+    ],
+    "specs": [
+     [
+      "Connexion",
+      "Bluetooth, portée 10 m"
+     ],
+     [
+      "Programmes",
+      "3"
+     ]
+    ]
+   }
+  ],
+  "note100": ""
+ },
+ "robot-aspirateur-pas-cher": {
+  "b50": [],
+  "note50": "Aucun robot aspirateur fiable d'une marque sérieuse sous 50 €.",
+  "b100": [],
+  "note100": "Les rares robots sérieux autour de 100 € sont déjà dans ce guide (Xiaomi entrée de gamme, Lefant). Les autres modèles sous 100 € sont surtout des marques peu connues ou des modèles en fin de vie."
+ },
+ "robot-aspirateur-poils-animaux": {
+  "b50": [],
+  "note50": "Aucun robot aspirateur sérieux sous 50 €. Pour les poils, une brosse en caoutchouc ou un rouleau reste la solution à ce prix.",
+  "b100": [
+   {
+    "name": "ILIFE V3s Pro",
+    "brand": "ILIFE",
+    "for": "ramasser chaque jour les poils de chien ou de chat sur un sol dur, sans brosse à démêler.",
+    "pros": [
+     "Aspiration directe sans brosse rouleau : les poils ne s'enroulent pas",
+     "Modèle très répandu, pièces faciles à trouver",
+     "Programmable à la télécommande"
+    ],
+    "cons": [
+     "Navigation au hasard, sans carte",
+     "Peu efficace sur les tapis épais"
+    ],
+    "specs": [
+     [
+      "Aspiration",
+      "directe, sans brosse rouleau"
+     ],
+     [
+      "Moteur",
+      "sans balais (BLDC)"
+     ],
+     [
+      "Commande",
+      "télécommande"
+     ]
+    ]
+   }
+  ],
+  "note100": ""
+ },
+ "robot-aspirateur-petit-appartement": {
+  "b50": [],
+  "note50": "Aucun robot aspirateur fiable d'une marque sérieuse sous 50 €.",
+  "b100": [],
+  "note100": "Les robots sérieux autour de 100 € pour un petit logement sont déjà dans ce guide (Xiaomi Robot Vacuum S20, Eufy RoboVac gamme fine). Nous n'avons pas trouvé d'autre modèle de marque connue encore vendu sous 100 €."
+ },
+ "aspirateur-a-main": {
+  "b50": [
+   {
+    "name": "Hoover H-Handy 700 Express HH710T",
+    "brand": "Hoover",
+    "for": "ramasser les miettes sous la table ou sur le canapé en dix secondes.",
+    "pros": [
+     "Très léger (660 g)",
+     "Brosse éclairée par LED",
+     "Accessoire 3 en 1 fourni"
+    ],
+    "cons": [
+     "Autonomie courte (12 min)",
+     "Petit bac de 0,15 L"
+    ],
+    "specs": [
+     [
+      "Autonomie",
+      "12 min"
+     ],
+     [
+      "Bac",
+      "0,15 L"
+     ],
+     [
+      "Batterie",
+      "lithium 11,1 V"
+     ],
+     [
+      "Charge",
+      "3 h"
+     ],
+     [
+      "Poids",
+      "660 g"
+     ]
+    ]
+   }
+  ],
+  "note50": "",
+  "b100": [
+   {
+    "name": "Bosch Move BHN16L",
+    "brand": "Bosch",
+    "for": "passer un coup rapide dans la voiture ou l'escalier sans manquer de batterie.",
+    "pros": [
+     "Longue autonomie de 40 min",
+     "Brosse motorisée pour les tissus",
+     "2 niveaux de puissance"
+    ],
+    "cons": [
+     "Recharge longue (4 à 5 h)",
+     "Plus lourd qu'un mini-aspirateur (1,1 kg)"
+    ],
+    "specs": [
+     [
+      "Autonomie",
+      "40 min"
+     ],
+     [
+      "Tension",
+      "16 V"
+     ],
+     [
+      "Bac",
+      "0,3 L"
+     ],
+     [
+      "Poids",
+      "1,1 kg"
+     ]
+    ]
+   }
+  ],
+  "note100": ""
+ },
+ "etendoir-chauffant": {
+  "b50": [],
+  "note50": "Sous 50 €, on trouve surtout de petits étendoirs chauffants de marques peu connues. Le Domo DO7117DR, déjà dans ce guide, reste l'option sérieuse la moins chère.",
+  "b100": [
+   {
+    "name": "HOMCOM étendoir chauffant 3 niveaux 300 W",
+    "brand": "HOMCOM",
+    "for": "sécher une machine complète en hiver, sans sèche-linge.",
+    "pros": [
+     "30 barres chauffantes sur 3 niveaux",
+     "Se replie à plat (9 cm)",
+     "Consomme peu (300 W)"
+    ],
+    "cons": [
+     "Encombrant une fois déplié",
+     "Sans housse, le séchage reste lent"
+    ],
+    "specs": [
+     [
+      "Puissance",
+      "300 W"
+     ],
+     [
+      "Température",
+      "50 à 55 °C"
+     ],
+     [
+      "Barres",
+      "30"
+     ],
+     [
+      "Charge max",
+      "15 kg"
+     ],
+     [
+      "Dimensions ouvert",
+      "73 × 67 × 144 cm"
+     ]
+    ]
+   }
+  ],
+  "note100": ""
+ },
+ "centrale-vapeur": {
+  "b50": [],
+  "note50": "Aucune centrale vapeur sous 50 € : à ce prix, on ne trouve que des fers à repasser classiques.",
+  "b100": [],
+  "note100": "Pas de modèle fiable à ce prix chez une marque sérieuse pour le moment."
+ },
+ "multicuiseur": {
+  "b50": [],
+  "note50": "Aucun vrai multicuiseur sous pression sous 50 €. La mijoteuse électrique, déjà dans ce guide, est l'option la moins chère.",
+  "b100": [],
+  "note100": "Sous 100 €, l'Instant Pot déjà présent dans le guide est la référence. Les autres modèles de marque (Crock-Pot Express, Turbo Express) sont vendus au-dessus de 100 € chez les grands distributeurs."
+ },
+ "machine-a-pain": {
+  "b50": [],
+  "note50": "Aucune machine à pain d'une marque sérieuse sous 50 € : les premiers prix commencent autour de 60 à 70 €.",
+  "b100": [
+   {
+    "name": "Severin BM 3990",
+    "brand": "Severin",
+    "for": "avoir du pain frais le matin en mettant les ingrédients la veille.",
+    "pros": [
+     "12 programmes, dont pâte à pizza et gâteau",
+     "Dorage réglable",
+     "Marque allemande installée depuis longtemps"
+    ],
+    "cons": [
+     "Design daté",
+     "Moins de programmes spéciaux que les modèles haut de gamme"
+    ],
+    "specs": [
+     [
+      "Puissance",
+      "600 W"
+     ],
+     [
+      "Poids du pain",
+      "750 ou 1000 g"
+     ],
+     [
+      "Programmes",
+      "12"
+     ]
+    ]
+   }
+  ],
+  "note100": ""
+ },
+ "robot-tondeuse-sans-fil-perimetrique": {
+  "b50": [],
+  "note50": "Aucun robot tondeuse, avec ou sans fil, n'existe sous 50 €.",
+  "b100": [],
+  "note100": "Un vrai robot tondeuse sans fil périmétrique (RTK ou vision) coûte bien plus de 100 € : rien de fiable dans cette tranche."
+ },
+ "robot-piscine-sans-fil": {
+  "b50": [],
+  "note50": "Aucun robot piscine sans fil fiable sous 50 €.",
+  "b100": [
+   {
+    "name": "Intex 28620EP",
+    "brand": "Intex",
+    "for": "une petite piscine hors-sol ou un spa, pour aspirer le fond sans tuyau ni branchement à la filtration.",
+    "pros": [
+     "Sans fil : rien à brancher sur la pompe",
+     "Recharge par câble USB",
+     "Deux têtes de brosse fournies"
+    ],
+    "cons": [
+     "Ce n'est pas un robot : il faut le passer soi-même",
+     "Pensé pour les petits bassins, pas pour une grande piscine enterrée"
+    ],
+    "specs": [
+     [
+      "Bassins",
+      "Spas et piscines hors-sol jusqu'à 5,5 m de diamètre"
+     ],
+     [
+      "Batterie",
+      "Ni-MH intégrée, recharge USB"
+     ],
+     [
+      "Manche",
+      "Télescopique en aluminium"
+     ],
+     [
+      "Sécurité",
+      "Arrêt automatique hors de l'eau"
+     ]
+    ]
+   }
+  ],
+  "note100": ""
+ },
+ "souffleur-feuilles-batterie": {
+  "b50": [
+   {
+    "name": "Einhell GC-CL 18 Li E-Solo",
+    "brand": "Einhell",
+    "for": "ceux qui ont déjà une batterie Einhell Power X-Change, pour souffler la terrasse et l'allée en deux minutes.",
+    "pros": [
+     "Très léger, facile à tenir d'une main",
+     "Vitesse réglable",
+     "Compatible avec toutes les batteries Power X-Change 18 V"
+    ],
+    "cons": [
+     "Livré sans batterie ni chargeur",
+     "Trop juste pour un grand terrain couvert de feuilles mouillées"
+    ],
+    "specs": [
+     [
+      "Tension",
+      "18 V (Power X-Change)"
+     ],
+     [
+      "Vitesse de l'air",
+      "210 km/h"
+     ],
+     [
+      "Poids",
+      "1,33 kg sans batterie"
+     ]
+    ]
+   }
+  ],
+  "note50": "",
+  "b100": [
+   {
+    "name": "Einhell GE-UB 18/250 Li E (kit 4,0 Ah)",
+    "brand": "Einhell",
+    "for": "un jardin de taille moyenne, pour souffler feuilles et herbe coupée sans fil ni moteur thermique.",
+    "pros": [
+     "Livré prêt à l'emploi avec batterie 4,0 Ah et chargeur",
+     "Souffle puissant de 250 km/h",
+     "Tube en trois parties pour régler la longueur"
+    ],
+    "cons": [
+     "Assez bruyant (94 dB(A))",
+     "Ne fait pas aspirateur ni broyeur"
+    ],
+    "specs": [
+     [
+      "Tension",
+      "18 V (Power X-Change)"
+     ],
+     [
+      "Vitesse de l'air",
+      "250 km/h"
+     ],
+     [
+      "Débit",
+      "120 m³/h"
+     ],
+     [
+      "Poids",
+      "1,78 kg"
+     ]
+    ]
+   }
+  ],
+  "note100": ""
+ },
+ "litiere-autonettoyante-plusieurs-chats": {
+  "b50": [
+   {
+    "name": "Litter Genie Plus",
+    "brand": "Litter Genie",
+    "for": "garder un bac à litière classique tout en évitant d'aller à la poubelle après chaque ramassage.",
+    "pros": [
+     "Les crottes sont enfermées dans un sac qui bloque les odeurs",
+     "Pelle et support fournis",
+     "Se pose à côté du bac, sans branchement"
+    ],
+    "cons": [
+     "Ce n'est pas une litière autonettoyante : il faut toujours ramasser",
+     "Recharges de sacs à racheter"
+    ],
+    "specs": [
+     [
+      "Capacité",
+      "Jusqu'à 14 jours de déchets pour un chat"
+     ],
+     [
+      "Recharge fournie",
+      "Jusqu'à environ 2 mois et demi pour un chat"
+     ]
+    ]
+   }
+  ],
+  "note50": "",
+  "b100": [],
+  "note100": "Aucune litière autonettoyante sérieuse pour plusieurs chats entre 50 et 100 € : les modèles fiables commencent bien au-dessus."
+ },
+ "chatiere-electronique": {
+  "b50": [],
+  "note50": "Aucune chatière électronique de marque fiable sous 50 € en dehors de la Cat Mate, déjà dans le guide.",
+  "b100": [
+   {
+    "name": "PetSafe Chatière à puce électronique",
+    "brand": "PetSafe",
+    "for": "laisser entrer ses chats grâce à leur puce, sans laisser passer ceux du voisin.",
+    "pros": [
+     "Lit la puce d'identification déjà posée par le vétérinaire",
+     "Jusqu'à 40 chats enregistrés",
+     "Verrouillage manuel 4 positions"
+    ],
+    "cons": [
+     "Fonctionne sur piles, à surveiller",
+     "Pas d'application ni de notifications"
+    ],
+    "specs": [
+     [
+      "Chats enregistrables",
+      "Jusqu'à 40"
+     ],
+     [
+      "Alimentation",
+      "Piles, avec voyant de batterie faible"
+     ],
+     [
+      "Verrouillage",
+      "Double verrou automatique + verrou manuel 4 positions"
+     ]
+    ]
+   }
+  ],
+  "note100": ""
+ },
+ "lanceur-balle-automatique": {
+  "b50": [
+   {
+    "name": "Chuckit! Sport 18M",
+    "brand": "Chuckit!",
+    "for": "lancer la balle plus loin sans fatigue et la ramasser sans se pencher ni toucher la bave.",
+    "pros": [
+     "Lance 2 à 3 fois plus loin qu'à la main",
+     "Ramasse la balle sans les mains",
+     "Léger, se glisse dans la voiture"
+    ],
+    "cons": [
+     "Ce n'est pas automatique : il faut être là pour lancer",
+     "Balles de taille M uniquement"
+    ],
+    "specs": [
+     [
+      "Longueur",
+      "Environ 50 cm (20 pouces)"
+     ],
+     [
+      "Balle",
+      "Taille M (environ 6,4 cm), une fournie"
+     ],
+     [
+      "Matière",
+      "Plastique souple et léger"
+     ]
+    ]
+   }
+  ],
+  "note50": "",
+  "b100": [],
+  "note100": "Entre 50 et 100 €, les lanceurs automatiques sont surtout de marques inconnues ; les modèles de marque reconnue (iFetch, PetSafe) sont déjà dans le guide."
+ },
+ "brosse-anti-poils-chat": {
+  "b50": [
+   {
+    "name": "Ferplast GRO 5926",
+    "brand": "Ferplast",
+    "for": "un brossage rapide de son chat, à poils courts ou longs, avec une seule brosse à deux faces.",
+    "pros": [
+     "Deux faces : picots arrondis et poils doux",
+     "Picots en acier inoxydable arrondis, doux pour la peau",
+     "Très petit prix"
+    ],
+    "cons": [
+     "Pas de bouton pour vider les poils",
+     "Moins efficace sur le sous-poil qu'une carde de démêlage"
+    ],
+    "specs": [
+     [
+      "Picots",
+      "Acier inoxydable à bouts arrondis"
+     ],
+     [
+      "Pelage",
+      "Poils courts, moyens et longs"
+     ],
+     [
+      "Dimensions",
+      "19,5 x 5,5 x 5,5 cm"
+     ]
+    ]
+   }
+  ],
+  "note50": "",
+  "b100": [],
+  "note100": "Une bonne brosse pour chat coûte bien moins de 50 € : rien d'utile à proposer entre 50 et 100 €."
+ },
+ "rouleau-anti-poils": {
+  "b50": [
+   {
+    "name": "Lilly Brush Pet Hair Brush",
+    "brand": "Lilly Brush",
+    "for": "retirer les poils fins et duveteux du canapé, du lit ou des vêtements sans racheter de rouleaux adhésifs.",
+    "pros": [
+     "Réutilisable, sans recharge",
+     "Marche à sec ou légèrement humide",
+     "Se lave à l'eau savonneuse"
+    ],
+    "cons": [
+     "Moins efficace sur les poils très courts et piquants",
+     "Il faut ensuite ramasser les poils regroupés"
+    ],
+    "specs": [
+     [
+      "Dimensions",
+      "24 x 7,6 x 3,6 cm"
+     ],
+     [
+      "Entretien",
+      "Eau et savon doux"
+     ]
+    ]
+   }
+  ],
+  "note50": "",
+  "b100": [
+   {
+    "name": "Bissell Pet Hair Eraser 2278N",
+    "brand": "Bissell",
+    "for": "aspirer les poils incrustés dans le canapé, les escaliers ou la voiture, sans sortir le gros aspirateur.",
+    "pros": [
+     "Brosse motorisée spéciale poils d'animaux",
+     "Sans fil, léger et rapide à sortir",
+     "Réservoir facile à vider"
+    ],
+    "cons": [
+     "Autonomie courte, environ un quart d'heure",
+     "Charge longue"
+    ],
+    "specs": [
+     [
+      "Batterie",
+      "Lithium-ion 14,4 V"
+     ],
+     [
+      "Accessoire",
+      "Brosse motorisée spéciale animaux"
+     ]
+    ]
+   }
+  ],
+  "note100": ""
+ },
+ "aspirateur-toilettage-chat": {
+  "b50": [],
+  "note50": "Aucun kit de toilettage aspirant fiable sous 50 €.",
+  "b100": [],
+  "note100": "Les kits sérieux entre 50 et 100 € (Oneisall, Neabot) sont déjà dans le guide ; les autres sont de marques inconnues ou dépassent 100 €."
+ },
+ "anti-poils-machine-a-laver": {
+  "b50": [],
+  "note50": "Les solutions fiables sous 50 € (FurZapper, balles, sachets) sont déjà dans le guide ; aucun autre produit de marque avec photo officielle trouvé.",
+  "b100": [],
+  "note100": "Aucun accessoire anti-poils pour machine à laver ne coûte entre 50 et 100 € : ce n'est pas utile dans cette tranche."
+ },
+ "robot-aspirateur-station-vidage": {
+  "b50": [],
+  "note50": "Aucun robot aspirateur avec station de vidage sous 50 €.",
+  "b100": [],
+  "note100": "Aucun robot avec station de vidage fiable sous 100 € : les premiers modèles sérieux coûtent nettement plus."
+ },
+ "nettoyeur-vapeur": {
+  "b50": [
+   {
+    "name": "Black+Decker FSM13E1",
+    "brand": "BLACK+DECKER",
+    "for": "laver carrelage et parquet vitrifié sans seau ni produit, avec un petit budget.",
+    "pros": [
+     "Simple : on remplit, on branche, on passe",
+     "Pas de seau ni de détergent",
+     "Léger et facile à ranger"
+    ],
+    "cons": [
+     "Pas de nettoyeur à main pour les recoins",
+     "Petit réservoir pour une grande surface"
+    ],
+    "specs": [
+     [
+      "Puissance",
+      "1300 W"
+     ],
+     [
+      "Réservoir",
+      "380 ml"
+     ],
+     [
+      "Câble",
+      "4,8 m"
+     ],
+     [
+      "Poids",
+      "2,3 kg"
+     ]
+    ]
+   }
+  ],
+  "note50": "",
+  "b100": [
+   {
+    "name": "Polti Vaporetto SV400_Hygiene",
+    "brand": "Polti",
+    "for": "désinfecter les sols durs et rafraîchir les tapis chaque semaine sans produit chimique.",
+    "pros": [
+     "Prêt en 15 secondes",
+     "Brosse Vaporforce qui frotte et décolle la saleté",
+     "Autonomie illimitée grâce au réservoir amovible"
+    ],
+    "cons": [
+     "Peu d'accessoires fournis",
+     "Pas de mode nettoyeur à main"
+    ],
+    "specs": [
+     [
+      "Puissance",
+      "1500 W max"
+     ],
+     [
+      "Réservoir",
+      "0,3 L amovible"
+     ],
+     [
+      "Temps de chauffe",
+      "15 s"
+     ],
+     [
+      "Poids",
+      "2,1 kg"
+     ]
+    ]
+   }
+  ],
+  "note100": ""
+ },
+ "mini-lave-linge": {
+  "b50": [],
+  "note50": "Sous 50 €, on ne trouve que des laveuses manuelles ou des seaux pliables sans marque fiable : rien de sérieux en plus du Wonderwash déjà présenté.",
+  "b100": [
+   {
+    "name": "Adler AD 8055",
+    "brand": "Adler",
+    "for": "laver de petites charges dans un studio, une caravane ou un camping-car.",
+    "pros": [
+     "Très compacte et légère",
+     "Lavage et essorage dans la même cuve",
+     "Minuteries simples, sans réglage compliqué"
+    ],
+    "cons": [
+     "Semi-automatique : il faut remplir et vidanger",
+     "Essorage limité à 1 kg"
+    ],
+    "specs": [
+     [
+      "Capacité de lavage",
+      "3 kg"
+     ],
+     [
+      "Capacité d'essorage",
+      "1 kg"
+     ],
+     [
+      "Minuterie",
+      "15 min lavage / 5 min essorage"
+     ],
+     [
+      "Poids",
+      "5,7 kg"
+     ]
+    ]
+   }
+  ],
+  "note100": ""
+ },
+ "seche-linge-condensation": {
+  "b50": [],
+  "note50": "Aucun sèche-linge à condensation n'existe sous 50 € : même les modèles d'entrée de gamme coûtent plusieurs centaines d'euros.",
+  "b100": [],
+  "note100": "Aucun vrai sèche-linge à condensation sous 100 € : à ce prix, on ne trouve que de petits séchoirs sans condensation, qui ne rendent pas le même service."
+ },
+ "poubelle-automatique": {
+  "b50": [],
+  "note50": "Sous 50 €, les poubelles à capteur viennent surtout de marques peu connues, à la fiabilité incertaine : mieux vaut viser un peu plus haut.",
+  "b100": [
+   {
+    "name": "EKO Mirage X 47 L",
+    "brand": "EKO",
+    "for": "une cuisine familiale, pour jeter sans toucher le couvercle.",
+    "pros": [
+     "Ouverture par capteur de mouvement",
+     "Couvercle à fermeture douce",
+     "Inox brossé anti-traces de doigts"
+    ],
+    "cons": [
+     "Fonctionne avec 6 piles AA non fournies",
+     "Plus encombrante qu'une poubelle de 30 L"
+    ],
+    "specs": [
+     [
+      "Capacité",
+      "47 L"
+     ],
+     [
+      "Alimentation",
+      "6 piles AA"
+     ],
+     [
+      "Matériau",
+      "acier inoxydable brossé"
+     ]
+    ]
+   }
+  ],
+  "note100": ""
+ },
+ "cuiseur-riz": {
+  "b50": [
+   {
+    "name": "Russell Hobbs Cook@Home 19750-56",
+    "brand": "Russell Hobbs",
+    "for": "une famille, pour cuire le riz et les légumes vapeur sans surveiller la casserole.",
+    "pros": [
+     "Grande cuve pour 10 tasses de riz",
+     "Passe seul en maintien au chaud",
+     "Panier vapeur fourni"
+    ],
+    "cons": [
+     "Un seul programme, pas de mode riz complet",
+     "Pas de départ différé"
+    ],
+    "specs": [
+     [
+      "Capacité",
+      "1,8 L"
+     ],
+     [
+      "Riz",
+      "jusqu'à 10 tasses"
+     ],
+     [
+      "Accessoires",
+      "cuillère, verre doseur, panier vapeur"
+     ]
+    ]
+   }
+  ],
+  "note50": "",
+  "b100": [
+   {
+    "name": "Reishunger Mini cuiseur à riz digital",
+    "brand": "Reishunger",
+    "for": "une ou deux personnes qui veulent un riz réussi à chaque fois, prêt à l'heure voulue.",
+    "pros": [
+     "Logique floue en 7 phases de cuisson",
+     "Départ différé jusqu'à 24 h",
+     "Cuve céramique antiadhésive et panier vapeur"
+    ],
+    "cons": [
+     "Petite capacité, 3 portions au plus",
+     "Cuve à laver à la main"
+    ],
+    "specs": [
+     [
+      "Capacité",
+      "0,6 L (3 portions)"
+     ],
+     [
+      "Programmes",
+      "8 dont 6 pour le riz"
+     ],
+     [
+      "Maintien au chaud",
+      "jusqu'à 24 h"
+     ],
+     [
+      "Puissance",
+      "350–417 W"
+     ]
+    ]
+   }
+  ],
+  "note100": ""
+ },
+ "robot-tondeuse-pas-cher": {
+  "b50": [],
+  "note50": "Aucun robot tondeuse n'existe sous 50 €.",
+  "b100": [],
+  "note100": "Un vrai robot tondeuse fiable sous 100 € n'existe pas : les premiers modèles sérieux démarrent autour de 300 €."
+ },
+ "desherbeur-electrique": {
+  "b50": [
+   {
+    "name": "Gloria Thermoflamm Bio Classic",
+    "brand": "GLORIA",
+    "for": "brûler les herbes des allées et des terrasses sans produit chimique.",
+    "pros": [
+     "Sans fil : fonctionne avec une cartouche de gaz",
+     "Flamme jusqu'à 1000 °C",
+     "Long manche, on travaille debout"
+    ],
+    "cons": [
+     "Cartouches à racheter",
+     "À éviter par temps sec près des haies"
+    ],
+    "specs": [
+     [
+      "Température de flamme",
+      "jusqu'à 1000 °C"
+     ],
+     [
+      "Longueur",
+      "env. 87 cm"
+     ],
+     [
+      "Cartouche",
+      "CGV 330 L butane/propane"
+     ]
+    ]
+   }
+  ],
+  "note50": "",
+  "b100": [
+   {
+    "name": "Einhell GC-EG 1410",
+    "brand": "Einhell",
+    "for": "nettoyer les joints de terrasse et de pavés sans se mettre à genoux.",
+    "pros": [
+     "Brosse acier et brosse nylon fournies",
+     "Roulette de guidage pour suivre les joints",
+     "Léger : 1,5 kg"
+    ],
+    "cons": [
+     "Filaire : il faut une rallonge",
+     "Peu utile sur les herbes hautes"
+    ],
+    "specs": [
+     [
+      "Puissance",
+      "140 W"
+     ],
+     [
+      "Vitesse",
+      "1200 tr/min"
+     ],
+     [
+      "Brosses",
+      "Ø 100 mm, acier et nylon"
+     ],
+     [
+      "Poids",
+      "1,53 kg"
+     ]
+    ]
+   }
+  ],
+  "note100": ""
+ },
+ "litiere-autonettoyante-pas-chere": {
+  "b50": [
+   {
+    "name": "LitterLocker by Litter Genie",
+    "brand": "Litter Genie",
+    "for": "ramasser la litière sans descendre la poubelle chaque jour, à défaut d'une litière automatique.",
+    "pros": [
+     "Bloque les odeurs entre deux vidages",
+     "Pelle et support fournis",
+     "Jusqu'à 8 jours de déchets pour un chat"
+    ],
+    "cons": [
+     "Ne nettoie pas le bac à votre place",
+     "Recharges à racheter"
+    ],
+    "specs": [
+     [
+      "Contenance",
+      "jusqu'à 8 jours pour un chat"
+     ],
+     [
+      "Recharge",
+      "jusqu'à 3 mois pour un chat"
+     ],
+     [
+      "Fourni",
+      "bac, pelle, support, 1 recharge"
+     ]
+    ]
+   }
+  ],
+  "note50": "",
+  "b100": [],
+  "note100": "Les litières autonettoyantes sous 100 € sont rares et peu fiables ; les modèles sérieux commencent vers 150 €."
+ }
+}
