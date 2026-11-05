@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://zero-corvee.github.io/sitemap.xml
