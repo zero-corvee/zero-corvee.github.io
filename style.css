@@ -366,6 +366,13 @@ nav.cats a{transition:background-color var(--t1) var(--ease),color var(--t1) var
 /* Vitrine produits (6 oct. 2026) */
 main .hero.has-art h1{font-size:clamp(1.8rem,3.6vw,2.5rem);max-width:26ch}
 .hero.has-art{padding-bottom:12px}
+.budget{display:grid;gap:16px}
+.budget-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:22px}
+.budget-band h3{font-size:1rem;margin:0 0 10px;color:var(--c)}
+.budget-band .shops{grid-template-columns:1fr}
+.budget-note{margin:0;padding:16px;border:1px dashed var(--line);border-radius:16px;color:var(--muted);font-size:.92rem}
+.shop-con{font-size:.82rem;color:var(--muted);margin:0}
+.budget .disclose{font-size:.78rem;color:var(--muted)}
 .vitrine{display:grid;gap:16px;margin:28px 0 40px}
 .vitrine-head{display:flex;flex-wrap:wrap;gap:8px 20px;align-items:baseline;justify-content:space-between}
 .vitrine-head h2{font-size:clamp(1.3rem,2.4vw,1.7rem);letter-spacing:-.02em}
