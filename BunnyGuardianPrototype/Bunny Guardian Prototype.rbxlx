@@ -1,0 +1,2590 @@
+<roblox version="4">
+  <Item class="ReplicatedStorage" referent="0">
+    <Properties>
+      <string name="Name">ReplicatedStorage</string>
+    </Properties>
+    <Item class="Folder" referent="1">
+      <Properties>
+        <string name="Name">BunnyGuardian</string>
+      </Properties>
+      <Item class="Configuration" referent="2">
+        <Properties>
+          <string name="Name">GameState</string>
+        </Properties>
+      </Item>
+      <Item class="Folder" referent="3">
+        <Properties>
+          <string name="Name">Remotes</string>
+        </Properties>
+        <Item class="RemoteFunction" referent="4">
+          <Properties>
+            <string name="Name">BuyUpgrade</string>
+          </Properties>
+        </Item>
+        <Item class="RemoteEvent" referent="5">
+          <Properties>
+            <string name="Name">Notify</string>
+          </Properties>
+        </Item>
+        <Item class="RemoteEvent" referent="6">
+          <Properties>
+            <string name="Name">UseAbility</string>
+          </Properties>
+        </Item>
+      </Item>
+      <Item class="Folder" referent="7">
+        <Properties>
+          <string name="Name">Shared</string>
+        </Properties>
+        <Item class="ModuleScript" referent="8">
+          <Properties>
+            <string name="Name">Config</string>
+            <string name="Source"><![CDATA[--!strict
+-- Bunny Guardian: Rise of the Rabbit
+-- Shared tuning values used by both server and client.
+
+local Config = {}
+
+Config.GameName = "Bunny Guardian: Rise of the Rabbit"
+
+Config.Burrow = {
+	MaxHealth = 500,
+	Position = Vector3.new(0, 0, 0),
+	Radius = 7, -- foxes stop and attack at Radius + AttackRange
+}
+
+Config.Waves = {
+	Total = 10,
+	BossWave = 10,
+	FirstIntermission = 12,
+	Intermission = 8,
+	RestartDelay = 10,
+	WaveClearBonus = 10, -- coins per wave number, given to every player
+}
+
+function Config.FoxesForWave(wave: number): number
+	if wave == Config.Waves.BossWave then
+		return 8
+	end
+	return 3 + wave * 2
+end
+
+function Config.SpawnIntervalForWave(wave: number): number
+	return math.max(0.6, 2.2 - wave * 0.15)
+end
+
+Config.Player = {
+	WalkSpeed = 20,
+	JumpPower = 55,
+}
+
+Config.Mana = {
+	Max = 100,
+	RegenPerSecond = 8,
+}
+
+Config.Abilities = {
+	CarrotThrow = {
+		DisplayName = "Carrot",
+		KeyHint = "Click / F",
+		Cooldown = 0.35,
+		ManaCost = 0,
+		Damage = 15,
+		Speed = 90,
+		Range = 110,
+		HitRadius = 2.5,
+	},
+	HurricaneKick = {
+		DisplayName = "Hurricane Kick",
+		KeyHint = "Q",
+		Cooldown = 1.2,
+		ManaCost = 30,
+		Damage = 45,
+		Speed = 65,
+		Range = 90,
+		HitRadius = 4.5,
+	},
+	EarCyclone = {
+		DisplayName = "Ear Cyclone",
+		KeyHint = "E",
+		Cooldown = 8,
+		ManaCost = 0,
+		Radius = 16,
+		Duration = 4,
+		TickRate = 0.5,
+		DamagePerTick = 4,
+		SlowFactor = 0.35, -- enemies move at 35% speed
+		SlowDuration = 2.5,
+	},
+}
+
+Config.AbilityOrder = { "CarrotThrow", "HurricaneKick", "EarCyclone" }
+
+Config.Upgrades = {
+	CarrotDamage = {
+		DisplayName = "Carrot Power",
+		Description = "+25% carrot damage",
+		BaseCost = 15,
+		CostGrowth = 1.4,
+		MaxLevel = 10,
+		PerLevel = 0.25,
+	},
+	KickDamage = {
+		DisplayName = "Kick Power",
+		Description = "+25% Hurricane Kick damage",
+		BaseCost = 25,
+		CostGrowth = 1.45,
+		MaxLevel = 10,
+		PerLevel = 0.25,
+	},
+	MaxMana = {
+		DisplayName = "Mana Pool",
+		Description = "+20 max mana, +2 mana/s",
+		BaseCost = 20,
+		CostGrowth = 1.4,
+		MaxLevel = 8,
+		PerLevel = 20,
+		RegenPerLevel = 2,
+	},
+	RepairBurrow = {
+		DisplayName = "Repair Burrow",
+		Description = "Restore 100 burrow health",
+		BaseCost = 30,
+		CostGrowth = 1,
+		MaxLevel = math.huge,
+		Heal = 100,
+	},
+}
+
+Config.UpgradeOrder = { "CarrotDamage", "KickDamage", "MaxMana", "RepairBurrow" }
+
+function Config.GetUpgradeCost(upgradeId: string, level: number): number
+	local upgrade = Config.Upgrades[upgradeId]
+	if not upgrade then
+		return math.huge
+	end
+	return math.floor(upgrade.BaseCost * upgrade.CostGrowth ^ level + 0.5)
+end
+
+Config.Enemies = {
+	Fox = {
+		BaseHealth = 30,
+		HealthPerWave = 10,
+		BaseSpeed = 8,
+		SpeedPerWave = 0.5,
+		Damage = 5,
+		AttackInterval = 1,
+		AttackRange = 2.5,
+		Reward = 5,
+		HitRadius = 2,
+		HitHeight = 3,
+	},
+	Eagle = {
+		Health = 1500,
+		Reward = 250,
+		CircleRadius = 32,
+		CircleHeight = 12,
+		CircleSpeed = 0.6, -- radians per second
+		CircleTime = 6, -- seconds between dives
+		DiveTime = 1.4,
+		DiveHeight = 5,
+		DiveDamage = 30,
+		MinionInterval = 12,
+		MinionCount = 2,
+		HitRadius = 6,
+		HitHeight = 14,
+	},
+}
+
+return Config
+]]></string>
+          </Properties>
+        </Item>
+      </Item>
+    </Item>
+  </Item>
+  <Item class="ServerScriptService" referent="9">
+    <Properties>
+      <string name="Name">ServerScriptService</string>
+    </Properties>
+    <Item class="Folder" referent="10">
+      <Properties>
+        <string name="Name">BunnyGuardian</string>
+      </Properties>
+      <Item class="Script" referent="11">
+        <Properties>
+          <string name="Name">GameServer</string>
+          <token name="RunContext">0</token>
+          <string name="Source"><![CDATA[-- Bunny Guardian: Rise of the Rabbit - main server script.
+-- Builds the garden, then runs the wave loop: intermission -> wave -> ...
+-- -> boss eagle on wave 10 -> victory (or game over if the burrow falls).
+
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local BunnyGuardian = ReplicatedStorage:WaitForChild("BunnyGuardian")
+local Config = require(BunnyGuardian:WaitForChild("Shared"):WaitForChild("Config"))
+local Remotes = BunnyGuardian:WaitForChild("Remotes")
+local GameState = BunnyGuardian:WaitForChild("GameState")
+local NotifyRemote = Remotes:WaitForChild("Notify") :: RemoteEvent
+
+local Modules = script.Parent:WaitForChild("Modules")
+local MapBuilder = require(Modules.MapBuilder)
+local PlayerDataService = require(Modules.PlayerDataService)
+local CharacterService = require(Modules.CharacterService)
+local EnemyService = require(Modules.EnemyService)
+local AbilityService = require(Modules.AbilityService)
+local UpgradeService = require(Modules.UpgradeService)
+
+------------------------------------------------------------------------
+-- State
+------------------------------------------------------------------------
+
+local map = MapBuilder.Build()
+local burrowColor = map.Burrow.Color
+local burrowHealth = Config.Burrow.MaxHealth
+local burrowDestroyed = false
+local currentWave = 0
+local runId = 0
+local remainingToSpawn = 0
+local rng = Random.new()
+
+GameState:SetAttribute("GameName", Config.GameName)
+GameState:SetAttribute("TotalWaves", Config.Waves.Total)
+GameState:SetAttribute("BossWave", Config.Waves.BossWave)
+GameState:SetAttribute("Wave", 0)
+GameState:SetAttribute("Status", "Waiting")
+GameState:SetAttribute("Timer", 0)
+GameState:SetAttribute("EnemiesLeft", 0)
+GameState:SetAttribute("BurrowHealth", burrowHealth)
+GameState:SetAttribute("BurrowMaxHealth", Config.Burrow.MaxHealth)
+GameState:SetAttribute("BossActive", false)
+GameState:SetAttribute("BossHealth", 0)
+GameState:SetAttribute("BossMaxHealth", Config.Enemies.Eagle.Health)
+
+local function notify(text: string, kind: string?)
+	NotifyRemote:FireAllClients(text, kind or "info")
+end
+
+local function setStatus(status: string, timer: number?)
+	GameState:SetAttribute("Status", status)
+	GameState:SetAttribute("Timer", timer or 0)
+end
+
+local function setBurrowHealth(value: number)
+	burrowHealth = math.clamp(value, 0, Config.Burrow.MaxHealth)
+	GameState:SetAttribute("BurrowHealth", burrowHealth)
+end
+
+local function updateEnemiesLeft()
+	GameState:SetAttribute("EnemiesLeft", remainingToSpawn + EnemyService.Count())
+end
+
+local function getFoxSpawn(): Vector3
+	local base = map.FoxSpawns[rng:NextInteger(1, #map.FoxSpawns)]
+	return base + Vector3.new(rng:NextNumber(-6, 6), 0, rng:NextNumber(-6, 6))
+end
+
+------------------------------------------------------------------------
+-- Services
+------------------------------------------------------------------------
+
+PlayerDataService.Init()
+CharacterService.Init()
+
+EnemyService.Init({
+	BurrowPosition = Config.Burrow.Position,
+	EnemyFolder = map.EnemyFolder,
+	EffectsFolder = map.EffectsFolder,
+	GetFoxSpawn = getFoxSpawn,
+	GetWave = function()
+		return math.max(1, currentWave)
+	end,
+	OnBurrowDamaged = function(amount)
+		if burrowDestroyed or GameState:GetAttribute("Status") ~= "Wave" then
+			return
+		end
+		setBurrowHealth(burrowHealth - amount)
+		-- quick red flash on the mound
+		map.Burrow.Color = Color3.fromRGB(200, 70, 60)
+		task.delay(0.12, function()
+			map.Burrow.Color = burrowColor
+		end)
+		if burrowHealth <= 0 then
+			burrowDestroyed = true -- the wave loop handles cleanup
+		end
+	end,
+	OnKilled = function(enemy, killer)
+		if killer then
+			PlayerDataService.AddCoins(killer, enemy.Reward)
+		end
+		if enemy.Kind == "Eagle" then
+			GameState:SetAttribute("BossActive", false)
+			GameState:SetAttribute("BossHealth", 0)
+			notify("The Great Eagle has been defeated!", "success")
+			-- everyone shares the boss bounty
+			for _, player in Players:GetPlayers() do
+				if player ~= killer then
+					PlayerDataService.AddCoins(player, math.floor(enemy.Reward / 2))
+				end
+			end
+		end
+		updateEnemiesLeft()
+	end,
+	OnBossHealthChanged = function(health, maxHealth)
+		GameState:SetAttribute("BossHealth", health)
+		GameState:SetAttribute("BossMaxHealth", maxHealth)
+	end,
+})
+
+AbilityService.Init(map.EffectsFolder)
+
+UpgradeService.Init({
+	RepairBurrow = function(amount: number): boolean
+		if burrowDestroyed or burrowHealth >= Config.Burrow.MaxHealth then
+			return false
+		end
+		setBurrowHealth(burrowHealth + amount)
+		return true
+	end,
+})
+
+------------------------------------------------------------------------
+-- Game flow
+------------------------------------------------------------------------
+
+local function countdown(status: string, seconds: number)
+	for t = seconds, 1, -1 do
+		setStatus(status, t)
+		task.wait(1)
+	end
+end
+
+local function resetGame()
+	runId += 1
+	EnemyService.ClearAll()
+	AbilityService.ClearProjectiles()
+	burrowDestroyed = false
+	currentWave = 0
+	remainingToSpawn = 0
+	setBurrowHealth(Config.Burrow.MaxHealth)
+	GameState:SetAttribute("Wave", 0)
+	GameState:SetAttribute("BossActive", false)
+	GameState:SetAttribute("BossHealth", 0)
+	updateEnemiesLeft()
+	PlayerDataService.ResetAll()
+	for _, player in Players:GetPlayers() do
+		task.spawn(function()
+			player:LoadCharacter()
+		end)
+	end
+end
+
+-- Returns true if the wave was cleared, false if the burrow fell.
+local function runWave(wave: number): boolean
+	currentWave = wave
+	local myRun = runId
+	GameState:SetAttribute("Wave", wave)
+	setStatus("Wave")
+
+	local foxCount = Config.FoxesForWave(wave)
+	remainingToSpawn = foxCount
+
+	if wave == Config.Waves.BossWave then
+		notify("WAVE " .. wave .. " - The Great Eagle swoops in!", "boss")
+		GameState:SetAttribute("BossActive", true)
+		EnemyService.SpawnEagle()
+	else
+		notify("Wave " .. wave .. " - The foxes are coming!", "warning")
+	end
+	updateEnemiesLeft()
+
+	task.spawn(function()
+		local interval = Config.SpawnIntervalForWave(wave)
+		for _ = 1, foxCount do
+			if burrowDestroyed or runId ~= myRun then
+				return
+			end
+			EnemyService.SpawnFox(wave, getFoxSpawn())
+			remainingToSpawn -= 1
+			updateEnemiesLeft()
+			task.wait(interval)
+		end
+	end)
+
+	while not burrowDestroyed do
+		updateEnemiesLeft()
+		if remainingToSpawn <= 0 and EnemyService.Count() == 0 then
+			return true
+		end
+		task.wait(0.25)
+	end
+	return false
+end
+
+local function gameLoop()
+	while true do
+		while #Players:GetPlayers() == 0 do
+			setStatus("Waiting")
+			task.wait(1)
+		end
+
+		local won = true
+		for wave = 1, Config.Waves.Total do
+			countdown("Intermission", if wave == 1 then Config.Waves.FirstIntermission else Config.Waves.Intermission)
+			if not runWave(wave) then
+				won = false
+				break
+			end
+			local bonus = Config.Waves.WaveClearBonus * wave
+			for _, player in Players:GetPlayers() do
+				PlayerDataService.AddCoins(player, bonus)
+			end
+			if wave < Config.Waves.Total then
+				notify("Wave " .. wave .. " cleared! +" .. bonus .. " coins", "success")
+			end
+		end
+
+		runId += 1 -- stops any spawner still running
+		if won then
+			notify("VICTORY! The burrow is safe. You are the Bunny Guardian!", "success")
+			countdown("Victory", Config.Waves.RestartDelay)
+		else
+			EnemyService.ClearAll()
+			GameState:SetAttribute("BossActive", false)
+			notify("The burrow has fallen... the foxes win this time.", "boss")
+			countdown("GameOver", Config.Waves.RestartDelay)
+		end
+		resetGame()
+	end
+end
+
+-- Make sure players joining mid-game get fresh data (handled by PlayerDataService)
+-- and start the loop.
+task.spawn(gameLoop)
+]]></string>
+        </Properties>
+      </Item>
+      <Item class="Folder" referent="12">
+        <Properties>
+          <string name="Name">Modules</string>
+        </Properties>
+        <Item class="ModuleScript" referent="13">
+          <Properties>
+            <string name="Name">AbilityService</string>
+            <string name="Source"><![CDATA[-- AbilityService: server-authoritative abilities.
+--   CarrotThrow   - fast single-target carrot projectile (free)
+--   HurricaneKick - piercing green wind blade (costs mana)
+--   EarCyclone    - swirling wind around the rabbit that slows and chips enemies
+
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
+local Workspace = game:GetService("Workspace")
+
+local BunnyGuardian = ReplicatedStorage:WaitForChild("BunnyGuardian")
+local Config = require(BunnyGuardian:WaitForChild("Shared"):WaitForChild("Config"))
+local Remotes = BunnyGuardian:WaitForChild("Remotes")
+
+local PlayerDataService = require(script.Parent.PlayerDataService)
+local EnemyService = require(script.Parent.EnemyService)
+
+local AbilityService = {}
+
+type Projectile = {
+	Model: Model,
+	Position: Vector3,
+	Direction: Vector3,
+	Speed: number,
+	Traveled: number,
+	Range: number,
+	Damage: number,
+	HitRadius: number,
+	Pierce: boolean,
+	Hit: { [any]: boolean },
+	Owner: Player,
+	SpinSpeed: number,
+	Angle: number,
+}
+
+local projectiles: { Projectile } = {}
+local cooldowns: { [Player]: { [string]: number } } = {}
+local effectsFolder: Folder
+
+------------------------------------------------------------------------
+-- Visual builders
+------------------------------------------------------------------------
+
+local function fxPart(model: Instance, name: string, size: Vector3, color: Color3, material: Enum.Material?, transparency: number?, shape: Enum.PartType?): BasePart
+	local part = Instance.new("Part")
+	part.Name = name
+	part.Size = size
+	part.Color = color
+	part.Material = material or Enum.Material.SmoothPlastic
+	part.Transparency = transparency or 0
+	if shape then
+		part.Shape = shape
+	end
+	part.Anchored = true
+	part.CanCollide = false
+	part.CanQuery = false
+	part.CanTouch = false
+	part.CastShadow = false
+	part.Parent = model
+	return part
+end
+
+local function buildCarrot(): Model
+	local model = Instance.new("Model")
+	model.Name = "Carrot"
+	-- Built pointing along -Z (the model's forward).
+	local body = fxPart(model, "Body", Vector3.new(0.55, 0.55, 1.8), Color3.fromRGB(245, 135, 30))
+	body.CFrame = CFrame.new()
+	local tip = fxPart(model, "Tip", Vector3.new(0.35, 0.35, 0.5), Color3.fromRGB(230, 110, 20))
+	tip.CFrame = CFrame.new(0, 0, -1.1)
+	local leaves = fxPart(model, "Leaves", Vector3.new(0.3, 0.7, 0.5), Color3.fromRGB(70, 180, 60))
+	leaves.CFrame = CFrame.new(0, 0.2, 1.1)
+	model.PrimaryPart = body
+	return model
+end
+
+local function buildWindBlade(): Model
+	local model = Instance.new("Model")
+	model.Name = "WindBlade"
+	local main = fxPart(model, "Blade", Vector3.new(8, 0.35, 1.6), Color3.fromRGB(90, 255, 120), Enum.Material.Neon, 0.15)
+	main.CFrame = CFrame.new()
+	local inner = fxPart(model, "Core", Vector3.new(5, 0.4, 0.9), Color3.fromRGB(210, 255, 220), Enum.Material.Neon, 0.1)
+	inner.CFrame = CFrame.new(0, 0, -0.4)
+	for _, side in { -1, 1 } do
+		local wingTip = fxPart(model, "Tip", Vector3.new(2.4, 0.3, 1.1), Color3.fromRGB(90, 255, 120), Enum.Material.Neon, 0.3)
+		wingTip.CFrame = CFrame.new(side * 4.6, 0, 0.7) * CFrame.Angles(0, math.rad(side * 30), 0)
+	end
+	model.PrimaryPart = main
+
+	-- Trail for a sense of speed
+	local a0 = Instance.new("Attachment")
+	a0.Position = Vector3.new(-3.5, 0, 0)
+	a0.Parent = main
+	local a1 = Instance.new("Attachment")
+	a1.Position = Vector3.new(3.5, 0, 0)
+	a1.Parent = main
+	local trail = Instance.new("Trail")
+	trail.Attachment0 = a0
+	trail.Attachment1 = a1
+	trail.Color = ColorSequence.new(Color3.fromRGB(120, 255, 140))
+	trail.Transparency = NumberSequence.new(0.4, 1)
+	trail.Lifetime = 0.25
+	trail.LightEmission = 1
+	trail.Parent = main
+	return model
+end
+
+local function expandingRing(position: Vector3, color: Color3, fromSize: number, toSize: number, duration: number)
+	local ring = fxPart(effectsFolder, "Ring", Vector3.new(0.3, fromSize, fromSize), color, Enum.Material.Neon, 0.3, Enum.PartType.Cylinder)
+	ring.CFrame = CFrame.new(position) * CFrame.Angles(0, 0, math.rad(90))
+	task.spawn(function()
+		local start = os.clock()
+		while os.clock() - start < duration do
+			local alpha = (os.clock() - start) / duration
+			local size = fromSize + (toSize - fromSize) * alpha
+			ring.Size = Vector3.new(0.3, size, size)
+			ring.Transparency = 0.3 + 0.7 * alpha
+			RunService.Heartbeat:Wait()
+		end
+		ring:Destroy()
+	end)
+end
+
+------------------------------------------------------------------------
+-- Projectiles
+------------------------------------------------------------------------
+
+local function launch(model: Model, owner: Player, origin: Vector3, direction: Vector3, cfg: any, damage: number, pierce: boolean, spinSpeed: number)
+	local projectile: Projectile = {
+		Model = model,
+		Position = origin,
+		Direction = direction,
+		Speed = cfg.Speed,
+		Traveled = 0,
+		Range = cfg.Range,
+		Damage = damage,
+		HitRadius = cfg.HitRadius,
+		Pierce = pierce,
+		Hit = {},
+		Owner = owner,
+		SpinSpeed = spinSpeed,
+		Angle = 0,
+	}
+	model:PivotTo(CFrame.lookAt(origin, origin + direction))
+	model.Parent = effectsFolder
+	table.insert(projectiles, projectile)
+end
+
+local function stepProjectiles(dt: number)
+	for i = #projectiles, 1, -1 do
+		local p = projectiles[i]
+		local done = false
+		local distance = p.Speed * dt
+		p.Position += p.Direction * distance
+		p.Traveled += distance
+		p.Angle += p.SpinSpeed * dt
+
+		for _, enemy in EnemyService.GetEnemiesNear(p.Position, p.HitRadius) do
+			if not p.Hit[enemy] then
+				p.Hit[enemy] = true
+				EnemyService.Damage(enemy, p.Damage, if p.Owner.Parent then p.Owner else nil)
+				if not p.Pierce then
+					done = true
+					break
+				end
+			end
+		end
+
+		if done or p.Traveled >= p.Range then
+			p.Model:Destroy()
+			table.remove(projectiles, i)
+		else
+			p.Model:PivotTo(CFrame.lookAt(p.Position, p.Position + p.Direction) * CFrame.Angles(p.Angle, 0, 0))
+		end
+	end
+end
+
+------------------------------------------------------------------------
+-- Ability handlers
+------------------------------------------------------------------------
+
+local handlers = {}
+
+function handlers.CarrotThrow(player: Player, root: BasePart, direction: Vector3, cfg: any)
+	local damage = cfg.Damage * PlayerDataService.GetDamageMultiplier(player, "CarrotDamage")
+	launch(buildCarrot(), player, root.Position + direction * 2 + Vector3.new(0, 0.5, 0), direction, cfg, damage, false, 18)
+end
+
+function handlers.HurricaneKick(player: Player, root: BasePart, direction: Vector3, cfg: any)
+	local damage = cfg.Damage * PlayerDataService.GetDamageMultiplier(player, "KickDamage")
+	expandingRing(root.Position - Vector3.new(0, 2.5, 0), Color3.fromRGB(110, 255, 140), 3, 12, 0.35)
+	launch(buildWindBlade(), player, root.Position + direction * 3, direction, cfg, damage, true, 0)
+end
+
+function handlers.EarCyclone(player: Player, root: BasePart, _direction: Vector3, cfg: any)
+	local model = Instance.new("Model")
+	model.Name = "EarCyclone"
+	local column = fxPart(model, "Column", Vector3.new(7, cfg.Radius * 2, cfg.Radius * 2), Color3.fromRGB(200, 255, 230), Enum.Material.ForceField, 0.2, Enum.PartType.Cylinder)
+	local floor = fxPart(model, "Floor", Vector3.new(0.2, cfg.Radius * 2, cfg.Radius * 2), Color3.fromRGB(140, 255, 190), Enum.Material.Neon, 0.75, Enum.PartType.Cylinder)
+	local swirls = {}
+	for i = 1, 4 do
+		-- ear-shaped wind wisps orbiting the rabbit
+		swirls[i] = fxPart(model, "Wisp", Vector3.new(0.6, 3.2, 1.2), Color3.fromRGB(235, 255, 245), Enum.Material.Neon, 0.25)
+	end
+	model.Parent = effectsFolder
+
+	local start = os.clock()
+	local nextTick = 0
+	local connection: RBXScriptConnection
+	connection = RunService.Heartbeat:Connect(function()
+		local elapsed = os.clock() - start
+		if elapsed >= cfg.Duration or not root.Parent then
+			connection:Disconnect()
+			model:Destroy()
+			return
+		end
+		local center = root.Position
+		local ground = Vector3.new(center.X, center.Y - 2.6, center.Z)
+		column.CFrame = CFrame.new(ground + Vector3.new(0, 3.5, 0)) * CFrame.Angles(0, elapsed * 6, math.rad(90))
+		floor.CFrame = CFrame.new(ground + Vector3.new(0, 0.1, 0)) * CFrame.Angles(0, 0, math.rad(90))
+		for i, wisp in swirls do
+			local angle = elapsed * 7 + i * math.pi / 2
+			local r = cfg.Radius * (0.45 + 0.4 * ((i % 2 == 0) and 1 or 0))
+			local pos = ground + Vector3.new(math.cos(angle) * r, 2 + math.sin(elapsed * 4 + i), math.sin(angle) * r)
+			wisp.CFrame = CFrame.lookAt(pos, ground + Vector3.new(0, pos.Y - ground.Y, 0)) * CFrame.Angles(0, 0, math.rad(20))
+		end
+
+		if elapsed >= nextTick then
+			nextTick += cfg.TickRate
+			for _, enemy in EnemyService.GetEnemiesNear(center, cfg.Radius) do
+				EnemyService.Slow(enemy, cfg.SlowFactor, cfg.SlowDuration)
+				EnemyService.Damage(enemy, cfg.DamagePerTick, if player.Parent then player else nil)
+			end
+		end
+	end)
+end
+
+------------------------------------------------------------------------
+-- Remote handling
+------------------------------------------------------------------------
+
+local function sanitizeDirection(value: any, root: BasePart): Vector3
+	if typeof(value) == "Vector3" then
+		local flat = Vector3.new(value.X, 0, value.Z)
+		local magnitude = flat.Magnitude
+		if magnitude == magnitude and magnitude > 0.01 and magnitude < math.huge then
+			return flat / magnitude
+		end
+	end
+	local look = root.CFrame.LookVector
+	local flat = Vector3.new(look.X, 0, look.Z)
+	if flat.Magnitude < 0.01 then
+		return Vector3.new(0, 0, -1)
+	end
+	return flat.Unit
+end
+
+local function onUseAbility(player: Player, abilityName: any, aimDirection: any)
+	if typeof(abilityName) ~= "string" then
+		return
+	end
+	local cfg = Config.Abilities[abilityName]
+	local handler = handlers[abilityName]
+	if not cfg or not handler then
+		return
+	end
+
+	local character = player.Character
+	local root = character and character:FindFirstChild("HumanoidRootPart") :: BasePart?
+	local humanoid = character and character:FindFirstChildOfClass("Humanoid")
+	if not root or not humanoid or humanoid.Health <= 0 then
+		return
+	end
+
+	local now = Workspace:GetServerTimeNow()
+	local playerCooldowns = cooldowns[player]
+	if not playerCooldowns then
+		playerCooldowns = {}
+		cooldowns[player] = playerCooldowns
+	end
+	if (playerCooldowns[abilityName] or 0) > now + 0.05 then
+		return
+	end
+	if not PlayerDataService.TrySpendMana(player, cfg.ManaCost or 0) then
+		return
+	end
+
+	local readyAt = now + cfg.Cooldown
+	playerCooldowns[abilityName] = readyAt
+	player:SetAttribute("CD_" .. abilityName, readyAt)
+
+	handler(player, root, sanitizeDirection(aimDirection, root), cfg)
+end
+
+function AbilityService.ClearProjectiles()
+	for _, p in projectiles do
+		p.Model:Destroy()
+	end
+	table.clear(projectiles)
+end
+
+function AbilityService.Init(folder: Folder)
+	effectsFolder = folder
+	local useAbility = Remotes:WaitForChild("UseAbility") :: RemoteEvent
+	useAbility.OnServerEvent:Connect(onUseAbility)
+	RunService.Heartbeat:Connect(stepProjectiles)
+	Players.PlayerRemoving:Connect(function(player)
+		cooldowns[player] = nil
+	end)
+end
+
+return AbilityService
+]]></string>
+          </Properties>
+        </Item>
+        <Item class="ModuleScript" referent="14">
+          <Properties>
+            <string name="Name">CharacterService</string>
+            <string name="Source"><![CDATA[-- CharacterService: turns every player into a cute heroic rabbit using simple
+-- welded parts (ears, tail, nose, red hero scarf and cape).
+
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Config = require(ReplicatedStorage:WaitForChild("BunnyGuardian"):WaitForChild("Shared"):WaitForChild("Config"))
+
+local CharacterService = {}
+
+local FUR = Color3.fromRGB(250, 248, 244)
+local PINK = Color3.fromRGB(255, 170, 195)
+local HERO_RED = Color3.fromRGB(220, 50, 60)
+
+local function weldPart(parent: Model, anchor: BasePart, name: string, size: Vector3, cframe: CFrame, color: Color3, shape: Enum.PartType?): BasePart
+	local part = Instance.new("Part")
+	part.Name = name
+	part.Size = size
+	part.Color = color
+	part.Material = Enum.Material.SmoothPlastic
+	part.TopSurface = Enum.SurfaceType.Smooth
+	part.BottomSurface = Enum.SurfaceType.Smooth
+	if shape then
+		part.Shape = shape
+	end
+	part.CanCollide = false
+	part.CanQuery = false
+	part.CanTouch = false
+	part.Massless = true
+	part.Anchored = false
+	part.CFrame = cframe
+	local weld = Instance.new("WeldConstraint")
+	weld.Part0 = anchor
+	weld.Part1 = part
+	weld.Parent = part
+	part.Parent = parent
+	return part
+end
+
+local function paintFur(character: Model)
+	for _, child in character:GetChildren() do
+		if child:IsA("Accessory") or child:IsA("Shirt") or child:IsA("Pants") or child:IsA("ShirtGraphic") then
+			child:Destroy()
+		elseif child:IsA("BasePart") and child.Name ~= "HumanoidRootPart" and child.Parent == character then
+			child.Color = FUR
+		elseif child:IsA("BodyColors") then
+			child.HeadColor3 = FUR
+			child.TorsoColor3 = FUR
+			child.LeftArmColor3 = FUR
+			child.RightArmColor3 = FUR
+			child.LeftLegColor3 = FUR
+			child.RightLegColor3 = FUR
+		end
+	end
+end
+
+local function addBunnyParts(character: Model)
+	if character:FindFirstChild("BunnyParts") then
+		return
+	end
+	local head = character:FindFirstChild("Head") :: BasePart?
+	local torso = (character:FindFirstChild("UpperTorso") or character:FindFirstChild("Torso")) :: BasePart?
+	local lowerBack = (character:FindFirstChild("LowerTorso") or torso) :: BasePart?
+	if not head or not torso or not lowerBack then
+		return
+	end
+
+	local bunny = Instance.new("Model")
+	bunny.Name = "BunnyParts"
+	bunny.Parent = character
+
+	local headTop = head.Size.Y / 2
+	for _, side in { -1, 1 } do
+		local earCFrame = head.CFrame * CFrame.new(side * 0.35, headTop + 0.95, 0) * CFrame.Angles(0, 0, math.rad(-side * 10))
+		weldPart(bunny, head, side < 0 and "EarL" or "EarR", Vector3.new(0.45, 2, 0.22), earCFrame, FUR)
+		weldPart(bunny, head, side < 0 and "EarInnerL" or "EarInnerR", Vector3.new(0.25, 1.6, 0.05), earCFrame * CFrame.new(0, -0.05, -0.12), PINK)
+	end
+	weldPart(bunny, head, "Nose", Vector3.new(0.25, 0.2, 0.15), head.CFrame * CFrame.new(0, -0.05, -head.Size.Z / 2 - 0.02), PINK)
+	weldPart(bunny, head, "CheekL", Vector3.new(0.2, 0.2, 0.05), head.CFrame * CFrame.new(-0.35, -0.15, -head.Size.Z / 2 - 0.01), PINK, Enum.PartType.Ball)
+	weldPart(bunny, head, "CheekR", Vector3.new(0.2, 0.2, 0.05), head.CFrame * CFrame.new(0.35, -0.15, -head.Size.Z / 2 - 0.01), PINK, Enum.PartType.Ball)
+
+	-- Fluffy tail
+	weldPart(bunny, lowerBack, "Tail", Vector3.new(0.9, 0.9, 0.9), lowerBack.CFrame * CFrame.new(0, -lowerBack.Size.Y / 4, lowerBack.Size.Z / 2 + 0.3), FUR, Enum.PartType.Ball)
+
+	-- Hero scarf + cape
+	weldPart(bunny, torso, "Scarf", Vector3.new(torso.Size.X + 0.15, 0.35, torso.Size.Z + 0.15), torso.CFrame * CFrame.new(0, torso.Size.Y / 2 - 0.1, 0), HERO_RED)
+	weldPart(bunny, torso, "Cape", Vector3.new(torso.Size.X * 0.9, torso.Size.Y * 1.3, 0.1), torso.CFrame * CFrame.new(0, -torso.Size.Y * 0.2, torso.Size.Z / 2 + 0.08) * CFrame.Angles(math.rad(-8), 0, 0), HERO_RED)
+end
+
+local function applyBunny(character: Model)
+	if not character.Parent then
+		return
+	end
+	paintFur(character)
+	addBunnyParts(character)
+end
+
+local function onCharacterAdded(character: Model)
+	local humanoid = character:WaitForChild("Humanoid", 10) :: Humanoid?
+	if humanoid then
+		humanoid.WalkSpeed = Config.Player.WalkSpeed
+		humanoid.UseJumpPower = true
+		humanoid.JumpPower = Config.Player.JumpPower
+		humanoid.DisplayDistanceType = Enum.HumanoidDisplayDistanceType.None
+	end
+	character:WaitForChild("Head", 10)
+	-- Fallback in case CharacterAppearanceLoaded already fired / never fires.
+	task.delay(1.5, applyBunny, character)
+end
+
+local function onPlayerAdded(player: Player)
+	player.CharacterAdded:Connect(onCharacterAdded)
+	player.CharacterAppearanceLoaded:Connect(applyBunny)
+	if player.Character then
+		task.spawn(onCharacterAdded, player.Character)
+	end
+end
+
+function CharacterService.Init()
+	Players.PlayerAdded:Connect(onPlayerAdded)
+	for _, player in Players:GetPlayers() do
+		onPlayerAdded(player)
+	end
+end
+
+return CharacterService
+]]></string>
+          </Properties>
+        </Item>
+        <Item class="ModuleScript" referent="15">
+          <Properties>
+            <string name="Name">EnemyService</string>
+            <string name="Source"><![CDATA[-- EnemyService: spawns, moves and damages enemies (foxes and the boss eagle).
+-- Enemies are anchored placeholder models moved with PivotTo every frame,
+-- which keeps them cheap and fully server-authoritative.
+
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
+local Debris = game:GetService("Debris")
+
+local Config = require(ReplicatedStorage:WaitForChild("BunnyGuardian"):WaitForChild("Shared"):WaitForChild("Config"))
+
+local EnemyService = {}
+
+export type Enemy = {
+	Model: Model,
+	Root: BasePart,
+	Kind: string,
+	Health: number,
+	MaxHealth: number,
+	Speed: number,
+	Damage: number,
+	AttackInterval: number,
+	AttackRange: number,
+	AttackTimer: number,
+	Reward: number,
+	HitRadius: number,
+	HitHeight: number,
+	Position: Vector3,
+	Facing: Vector3,
+	SlowFactor: number,
+	SlowUntil: number,
+	Phase: number,
+	Dead: boolean,
+	Bar: Frame?,
+	-- eagle only
+	State: string?,
+	StateTimer: number,
+	Angle: number,
+	MinionTimer: number,
+	DiveFrom: Vector3?,
+	Wings: { { Part: BasePart, Offset: CFrame, Side: number } }?,
+}
+
+type InitOptions = {
+	BurrowPosition: Vector3,
+	EnemyFolder: Folder,
+	EffectsFolder: Folder,
+	GetFoxSpawn: () -> Vector3,
+	GetWave: () -> number,
+	OnBurrowDamaged: (amount: number, enemy: Enemy) -> (),
+	OnKilled: (enemy: Enemy, killer: Player?) -> (),
+	OnBossHealthChanged: (health: number, maxHealth: number) -> (),
+}
+
+local active: { [Model]: Enemy } = {}
+local options: InitOptions
+local initialized = false
+
+local FOX_PIVOT_HEIGHT = 1.7
+
+------------------------------------------------------------------------
+-- Model builders
+------------------------------------------------------------------------
+
+local function addPart(model: Model, name: string, size: Vector3, offset: CFrame, color: Color3, className: string?): BasePart
+	local part = Instance.new(className or "Part") :: BasePart
+	part.Name = name
+	part.Size = size
+	part.CFrame = offset
+	part.Color = color
+	part.Anchored = true
+	part.CanCollide = false
+	part.CanTouch = false
+	part.Material = Enum.Material.SmoothPlastic
+	part.TopSurface = Enum.SurfaceType.Smooth
+	part.BottomSurface = Enum.SurfaceType.Smooth
+	part.Parent = model
+	return part
+end
+
+local function addHealthBar(root: BasePart, width: number, height: number): Frame
+	local gui = Instance.new("BillboardGui")
+	gui.Name = "HealthBar"
+	gui.Size = UDim2.new(width, 0, 0.45, 0)
+	gui.StudsOffset = Vector3.new(0, height, 0)
+	gui.AlwaysOnTop = true
+	gui.MaxDistance = 150
+	gui.Adornee = root
+	gui.Parent = root
+
+	local back = Instance.new("Frame")
+	back.Size = UDim2.fromScale(1, 1)
+	back.BackgroundColor3 = Color3.fromRGB(40, 20, 20)
+	back.BorderSizePixel = 0
+	back.Parent = gui
+	local corner = Instance.new("UICorner")
+	corner.CornerRadius = UDim.new(0.5, 0)
+	corner.Parent = back
+
+	local fill = Instance.new("Frame")
+	fill.Name = "Fill"
+	fill.Size = UDim2.fromScale(1, 1)
+	fill.BackgroundColor3 = Color3.fromRGB(110, 220, 90)
+	fill.BorderSizePixel = 0
+	fill.Parent = back
+	local fillCorner = Instance.new("UICorner")
+	fillCorner.CornerRadius = UDim.new(0.5, 0)
+	fillCorner.Parent = fill
+	return fill
+end
+
+local function buildFox(): (Model, BasePart)
+	local model = Instance.new("Model")
+	model.Name = "Fox"
+	local orange = Color3.fromRGB(226, 112, 40)
+	local cream = Color3.fromRGB(250, 240, 225)
+	local dark = Color3.fromRGB(45, 30, 25)
+
+	local body = addPart(model, "Body", Vector3.new(2, 1.6, 3.2), CFrame.new(0, 0, 0), orange)
+	addPart(model, "Belly", Vector3.new(1.6, 0.3, 2.6), CFrame.new(0, -0.7, 0), cream)
+	addPart(model, "Head", Vector3.new(1.7, 1.5, 1.5), CFrame.new(0, 0.7, -2), orange)
+	addPart(model, "Snout", Vector3.new(0.8, 0.6, 0.9), CFrame.new(0, 0.4, -3.1), cream)
+	addPart(model, "Nose", Vector3.new(0.3, 0.3, 0.2), CFrame.new(0, 0.6, -3.6), dark)
+	addPart(model, "EyeL", Vector3.new(0.25, 0.3, 0.1), CFrame.new(-0.42, 0.95, -2.76), dark)
+	addPart(model, "EyeR", Vector3.new(0.25, 0.3, 0.1), CFrame.new(0.42, 0.95, -2.76), dark)
+	addPart(model, "EarL", Vector3.new(0.3, 0.8, 0.6), CFrame.new(-0.55, 1.85, -2) * CFrame.Angles(0, math.rad(180), 0), orange, "WedgePart")
+	addPart(model, "EarR", Vector3.new(0.3, 0.8, 0.6), CFrame.new(0.55, 1.85, -2) * CFrame.Angles(0, math.rad(180), 0), orange, "WedgePart")
+	for _, x in { -0.7, 0.7 } do
+		for _, z in { -1.1, 1.1 } do
+			addPart(model, "Leg", Vector3.new(0.45, 1, 0.45), CFrame.new(x, -1.2, z), dark)
+		end
+	end
+	addPart(model, "Tail", Vector3.new(0.9, 0.9, 2.2), CFrame.new(0, 0.4, 2.5) * CFrame.Angles(math.rad(25), 0, 0), orange)
+	addPart(model, "TailTip", Vector3.new(0.92, 0.92, 0.6), CFrame.new(0, 0.85, 3.45) * CFrame.Angles(math.rad(25), 0, 0), cream)
+
+	model.PrimaryPart = body
+	return model, body
+end
+
+local function buildEagle(): (Model, BasePart, { { Part: BasePart, Offset: CFrame, Side: number } })
+	local model = Instance.new("Model")
+	model.Name = "BossEagle"
+	local brown = Color3.fromRGB(92, 60, 36)
+	local white = Color3.fromRGB(245, 245, 240)
+	local yellow = Color3.fromRGB(250, 196, 40)
+	local s = 1.6
+
+	local body = addPart(model, "Body", Vector3.new(3, 3, 5) * s, CFrame.new(0, 0, 0), brown)
+	addPart(model, "Head", Vector3.new(2.2, 2.2, 2.2) * s, CFrame.new(0, 1.3 * s, -3.1 * s), white)
+	addPart(model, "Beak", Vector3.new(0.8, 0.9, 1.4) * s, CFrame.new(0, 1 * s, -4.6 * s) * CFrame.Angles(math.rad(180), 0, 0), yellow, "WedgePart")
+	addPart(model, "EyeL", Vector3.new(0.3, 0.4, 0.2) * s, CFrame.new(-0.75 * s, 1.6 * s, -4.15 * s), Color3.fromRGB(20, 20, 20))
+	addPart(model, "EyeR", Vector3.new(0.3, 0.4, 0.2) * s, CFrame.new(0.75 * s, 1.6 * s, -4.15 * s), Color3.fromRGB(20, 20, 20))
+	addPart(model, "Brow", Vector3.new(2.3, 0.3, 0.3) * s, CFrame.new(0, 2 * s, -4.15 * s), brown)
+	addPart(model, "Tail", Vector3.new(3, 0.5, 2.5) * s, CFrame.new(0, 0, 3.6 * s), white)
+	addPart(model, "TalonL", Vector3.new(0.6, 1, 0.6) * s, CFrame.new(-0.8 * s, -1.9 * s, 0), yellow)
+	addPart(model, "TalonR", Vector3.new(0.6, 1, 0.6) * s, CFrame.new(0.8 * s, -1.9 * s, 0), yellow)
+
+	local wings = {}
+	for _, side in { -1, 1 } do
+		local offset = CFrame.new(side * 1.5 * s, 0.6 * s, 0)
+		local wing = addPart(model, side < 0 and "WingL" or "WingR", Vector3.new(10, 0.5, 3.4) * s, offset * CFrame.new(side * 5 * s, 0, 0), brown)
+		table.insert(wings, { Part = wing, Offset = offset, Side = side })
+	end
+
+	model.PrimaryPart = body
+	return model, body, wings
+end
+
+------------------------------------------------------------------------
+-- Helpers
+------------------------------------------------------------------------
+
+local function updateBar(enemy: Enemy)
+	local bar = enemy.Bar
+	if not bar then
+		return
+	end
+	local ratio = math.clamp(enemy.Health / enemy.MaxHealth, 0, 1)
+	bar.Size = UDim2.fromScale(ratio, 1)
+	bar.BackgroundColor3 = Color3.fromRGB(230, 70, 60):Lerp(Color3.fromRGB(110, 220, 90), ratio)
+end
+
+local function flash(model: Model, color: Color3)
+	local highlight = Instance.new("Highlight")
+	highlight.FillColor = color
+	highlight.FillTransparency = 0.35
+	highlight.OutlineTransparency = 1
+	highlight.DepthMode = Enum.HighlightDepthMode.Occluded
+	highlight.Parent = model
+	Debris:AddItem(highlight, 0.1)
+end
+
+local function poof(position: Vector3, color: Color3, size: number)
+	local part = Instance.new("Part")
+	part.Name = "Poof"
+	part.Shape = Enum.PartType.Ball
+	part.Anchored = true
+	part.CanCollide = false
+	part.CanQuery = false
+	part.CanTouch = false
+	part.Material = Enum.Material.Neon
+	part.Color = color
+	part.Transparency = 0.3
+	part.Size = Vector3.new(size, size, size)
+	part.CFrame = CFrame.new(position)
+	part.Parent = options.EffectsFolder
+	task.spawn(function()
+		for i = 1, 10 do
+			local grow = size * (1 + i * 0.12)
+			part.Size = Vector3.new(grow, grow, grow)
+			part.Transparency = 0.3 + i * 0.07
+			task.wait(0.03)
+		end
+		part:Destroy()
+	end)
+end
+
+local function register(model: Model, root: BasePart, enemy: Enemy)
+	enemy.Bar = addHealthBar(root, enemy.Kind == "Eagle" and 8 or 3.5, enemy.Kind == "Eagle" and 6 or 3)
+	model.Parent = options.EnemyFolder
+	active[model] = enemy
+end
+
+local function flatDirection(from: Vector3, to: Vector3): (Vector3, number)
+	local delta = Vector3.new(to.X - from.X, 0, to.Z - from.Z)
+	local distance = delta.Magnitude
+	if distance < 1e-3 then
+		return Vector3.new(0, 0, -1), 0
+	end
+	return delta / distance, distance
+end
+
+------------------------------------------------------------------------
+-- Spawning
+------------------------------------------------------------------------
+
+function EnemyService.SpawnFox(wave: number, position: Vector3): Enemy
+	local cfg = Config.Enemies.Fox
+	local model, root = buildFox()
+	local health = cfg.BaseHealth + cfg.HealthPerWave * (wave - 1)
+	local enemy: Enemy = {
+		Model = model,
+		Root = root,
+		Kind = "Fox",
+		Health = health,
+		MaxHealth = health,
+		Speed = cfg.BaseSpeed + cfg.SpeedPerWave * (wave - 1),
+		Damage = cfg.Damage,
+		AttackInterval = cfg.AttackInterval,
+		AttackRange = cfg.AttackRange,
+		AttackTimer = 0,
+		Reward = cfg.Reward,
+		HitRadius = cfg.HitRadius,
+		HitHeight = cfg.HitHeight,
+		Position = Vector3.new(position.X, FOX_PIVOT_HEIGHT, position.Z),
+		Facing = Vector3.new(0, 0, -1),
+		SlowFactor = 1,
+		SlowUntil = 0,
+		Phase = math.random() * math.pi,
+		Dead = false,
+		StateTimer = 0,
+		Angle = 0,
+		MinionTimer = 0,
+	}
+	enemy.Facing = flatDirection(enemy.Position, options.BurrowPosition)
+	model:PivotTo(CFrame.lookAt(enemy.Position, enemy.Position + enemy.Facing))
+	register(model, root, enemy)
+	return enemy
+end
+
+function EnemyService.SpawnEagle(): Enemy
+	local cfg = Config.Enemies.Eagle
+	local model, root, wings = buildEagle()
+	local start = options.BurrowPosition + Vector3.new(0, 40, -90)
+	local enemy: Enemy = {
+		Model = model,
+		Root = root,
+		Kind = "Eagle",
+		Health = cfg.Health,
+		MaxHealth = cfg.Health,
+		Speed = 1,
+		Damage = cfg.DiveDamage,
+		AttackInterval = 0,
+		AttackRange = 0,
+		AttackTimer = 0,
+		Reward = cfg.Reward,
+		HitRadius = cfg.HitRadius,
+		HitHeight = cfg.HitHeight,
+		Position = start,
+		Facing = Vector3.new(0, 0, 1),
+		SlowFactor = 1,
+		SlowUntil = 0,
+		Phase = 0,
+		Dead = false,
+		State = "Circle",
+		StateTimer = cfg.CircleTime,
+		Angle = -math.pi / 2,
+		MinionTimer = cfg.MinionInterval,
+		Wings = wings,
+	}
+	model:PivotTo(CFrame.lookAt(start, start + enemy.Facing))
+	register(model, root, enemy)
+	options.OnBossHealthChanged(enemy.Health, enemy.MaxHealth)
+	return enemy
+end
+
+------------------------------------------------------------------------
+-- Combat API (used by AbilityService)
+------------------------------------------------------------------------
+
+local function kill(enemy: Enemy, killer: Player?)
+	if enemy.Dead then
+		return
+	end
+	enemy.Dead = true
+	active[enemy.Model] = nil
+	poof(enemy.Root.Position, enemy.Kind == "Eagle" and Color3.fromRGB(255, 230, 120) or Color3.fromRGB(255, 200, 150), enemy.Kind == "Eagle" and 10 or 3)
+	enemy.Model:Destroy()
+	options.OnKilled(enemy, killer)
+end
+
+function EnemyService.Damage(enemy: Enemy, amount: number, attacker: Player?)
+	if enemy.Dead or amount <= 0 then
+		return
+	end
+	enemy.Health = math.max(0, enemy.Health - amount)
+	updateBar(enemy)
+	flash(enemy.Model, Color3.fromRGB(255, 255, 255))
+	if enemy.Kind == "Eagle" then
+		options.OnBossHealthChanged(enemy.Health, enemy.MaxHealth)
+	end
+	if enemy.Health <= 0 then
+		kill(enemy, attacker)
+	end
+end
+
+function EnemyService.Slow(enemy: Enemy, factor: number, duration: number)
+	if enemy.Dead then
+		return
+	end
+	local now = os.clock()
+	enemy.SlowFactor = if now < enemy.SlowUntil then math.min(enemy.SlowFactor, factor) else factor
+	enemy.SlowUntil = math.max(enemy.SlowUntil, now + duration)
+end
+
+-- Returns living enemies whose hit cylinder overlaps a sphere-ish probe.
+function EnemyService.GetEnemiesNear(position: Vector3, radius: number): { Enemy }
+	local result = {}
+	for _, enemy in active do
+		if not enemy.Dead then
+			local flat = Vector3.new(enemy.Position.X - position.X, 0, enemy.Position.Z - position.Z).Magnitude
+			if flat <= radius + enemy.HitRadius and math.abs(enemy.Position.Y - position.Y) <= enemy.HitHeight then
+				table.insert(result, enemy)
+			end
+		end
+	end
+	return result
+end
+
+function EnemyService.Count(): number
+	local n = 0
+	for _ in active do
+		n += 1
+	end
+	return n
+end
+
+function EnemyService.ClearAll()
+	for model, enemy in active do
+		enemy.Dead = true
+		model:Destroy()
+	end
+	table.clear(active)
+end
+
+------------------------------------------------------------------------
+-- Per-frame behaviour
+------------------------------------------------------------------------
+
+local function updateFox(enemy: Enemy, dt: number, speedMult: number)
+	local dir, distance = flatDirection(enemy.Position, options.BurrowPosition)
+	local stopDistance = Config.Burrow.Radius + enemy.AttackRange
+	local bob = 0
+	local lunge = 0
+	if distance > stopDistance then
+		local stepLength = math.min(enemy.Speed * speedMult * dt, distance - stopDistance)
+		enemy.Position += dir * stepLength
+		enemy.Phase += dt * enemy.Speed * speedMult * 1.2
+		bob = math.abs(math.sin(enemy.Phase)) * 0.4
+	else
+		enemy.AttackTimer -= dt * speedMult
+		if enemy.AttackTimer <= 0 then
+			enemy.AttackTimer = enemy.AttackInterval
+			options.OnBurrowDamaged(enemy.Damage, enemy)
+		end
+		-- quick lunge at the start of each attack
+		local t = 1 - enemy.AttackTimer / enemy.AttackInterval
+		lunge = if t < 0.25 then math.sin(t / 0.25 * math.pi) * 0.8 else 0
+	end
+	enemy.Facing = dir
+	local pos = enemy.Position + Vector3.new(0, bob, 0) + dir * lunge
+	enemy.Model:PivotTo(CFrame.lookAt(pos, pos + dir))
+end
+
+local function spawnMinions()
+	local wave = options.GetWave()
+	for _ = 1, Config.Enemies.Eagle.MinionCount do
+		EnemyService.SpawnFox(wave, options.GetFoxSpawn())
+	end
+end
+
+local function updateEagle(enemy: Enemy, dt: number, speedMult: number)
+	local cfg = Config.Enemies.Eagle
+	local burrow = options.BurrowPosition
+	enemy.StateTimer -= dt * speedMult
+	enemy.MinionTimer -= dt
+	if enemy.MinionTimer <= 0 then
+		enemy.MinionTimer = cfg.MinionInterval
+		task.defer(spawnMinions) -- never add enemies while iterating
+	end
+
+	local lookDir = enemy.Facing
+	if enemy.State == "Circle" then
+		enemy.Angle += dt * cfg.CircleSpeed * speedMult
+		local target = burrow + Vector3.new(math.cos(enemy.Angle) * cfg.CircleRadius, cfg.CircleHeight, math.sin(enemy.Angle) * cfg.CircleRadius)
+		enemy.Position = enemy.Position:Lerp(target, math.min(1, dt * 2.5))
+		lookDir = Vector3.new(-math.sin(enemy.Angle), 0, math.cos(enemy.Angle))
+		if enemy.StateTimer <= 0 then
+			enemy.State = "Dive"
+			enemy.StateTimer = cfg.DiveTime
+			enemy.DiveFrom = enemy.Position
+		end
+	elseif enemy.State == "Dive" then
+		local from = enemy.DiveFrom or enemy.Position
+		local outward = flatDirection(burrow, from)
+		local target = burrow + outward * (Config.Burrow.Radius + 2) + Vector3.new(0, cfg.DiveHeight, 0)
+		local alpha = math.clamp(1 - enemy.StateTimer / cfg.DiveTime, 0, 1)
+		enemy.Position = from:Lerp(target, alpha * alpha)
+		lookDir = flatDirection(from, burrow)
+		if enemy.StateTimer <= 0 then
+			options.OnBurrowDamaged(enemy.Damage, enemy)
+			poof(target, Color3.fromRGB(200, 170, 120), 6)
+			enemy.State = "Circle"
+			enemy.StateTimer = cfg.CircleTime
+		end
+	end
+
+	enemy.Facing = lookDir
+	enemy.Phase += dt * 6 * speedMult
+	enemy.Model:PivotTo(CFrame.lookAt(enemy.Position, enemy.Position + lookDir))
+
+	-- flap wings around their shoulder joints
+	local flap = math.sin(enemy.Phase) * math.rad(25)
+	local rootCFrame = enemy.Root.CFrame
+	for _, wing in enemy.Wings or {} do
+		local s = 1.6
+		wing.Part.CFrame = rootCFrame * wing.Offset * CFrame.Angles(0, 0, -wing.Side * flap) * CFrame.new(wing.Side * 5 * s, 0, 0)
+	end
+end
+
+local function step(dt: number)
+	local now = os.clock()
+	for _, enemy in active do
+		if not enemy.Dead then
+			local speedMult = if now < enemy.SlowUntil then enemy.SlowFactor else 1
+			if enemy.Kind == "Eagle" then
+				updateEagle(enemy, dt, speedMult)
+			else
+				updateFox(enemy, dt, speedMult)
+			end
+		end
+	end
+end
+
+function EnemyService.Init(opts: InitOptions)
+	assert(not initialized, "EnemyService already initialized")
+	initialized = true
+	options = opts
+	RunService.Heartbeat:Connect(step)
+end
+
+return EnemyService
+]]></string>
+          </Properties>
+        </Item>
+        <Item class="ModuleScript" referent="16">
+          <Properties>
+            <string name="Name">MapBuilder</string>
+            <string name="Source"><![CDATA[-- MapBuilder: builds the garden, the burrow and the fox spawn points from
+-- simple parts. Everything lives inside Workspace.BunnyGuardianMap so it never
+-- touches unrelated objects in the place.
+
+local Workspace = game:GetService("Workspace")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Config = require(ReplicatedStorage:WaitForChild("BunnyGuardian"):WaitForChild("Shared"):WaitForChild("Config"))
+
+local MapBuilder = {}
+
+export type MapInfo = {
+	Folder: Folder,
+	Burrow: BasePart,
+	EnemyFolder: Folder,
+	EffectsFolder: Folder,
+	FoxSpawns: { Vector3 },
+}
+
+local function makePart(props: { [string]: any }): BasePart
+	local className = props.ClassName or "Part"
+	local part = Instance.new(className) :: BasePart
+	part.Anchored = true
+	part.TopSurface = Enum.SurfaceType.Smooth
+	part.BottomSurface = Enum.SurfaceType.Smooth
+	local parent = props.Parent
+	for key, value in props do
+		if key ~= "Parent" and key ~= "ClassName" then
+			(part :: any)[key] = value
+		end
+	end
+	part.Parent = parent
+	return part
+end
+
+local function getOrCreateFolder(parent: Instance, name: string): Folder
+	local existing = parent:FindFirstChild(name)
+	if existing and existing:IsA("Folder") then
+		return existing
+	end
+	local folder = Instance.new("Folder")
+	folder.Name = name
+	folder.Parent = parent
+	return folder
+end
+
+-- A cylinder lying flat on the ground (Roblox cylinders point along X).
+local function flatDisk(parent: Instance, name: string, position: Vector3, diameter: number, thickness: number, color: Color3, material: Enum.Material?)
+	return makePart({
+		Name = name,
+		Shape = Enum.PartType.Cylinder,
+		Size = Vector3.new(thickness, diameter, diameter),
+		CFrame = CFrame.new(position) * CFrame.Angles(0, 0, math.rad(90)),
+		Color = color,
+		Material = material or Enum.Material.SmoothPlastic,
+		CanCollide = false,
+		Parent = parent,
+	})
+end
+
+local function buildBurrow(folder: Folder): BasePart
+	local burrowModel = Instance.new("Model")
+	burrowModel.Name = "Burrow"
+
+	local center = Config.Burrow.Position
+	local mound = makePart({
+		Name = "Mound",
+		Shape = Enum.PartType.Ball,
+		Size = Vector3.new(14, 14, 14),
+		CFrame = CFrame.new(center),
+		Color = Color3.fromRGB(122, 84, 52),
+		Material = Enum.Material.Ground,
+		Parent = burrowModel,
+	})
+	mound:SetAttribute("IsBurrow", true)
+
+	-- Grass cap so it looks like a hill with grass on top.
+	makePart({
+		Name = "GrassCap",
+		Shape = Enum.PartType.Ball,
+		Size = Vector3.new(9, 4, 9),
+		CFrame = CFrame.new(center + Vector3.new(0, 5.6, 0)),
+		Color = Color3.fromRGB(96, 168, 74),
+		Material = Enum.Material.Grass,
+		CanCollide = false,
+		Parent = burrowModel,
+	})
+
+	-- Entrance hole facing the player spawn (+Z).
+	makePart({
+		Name = "Entrance",
+		Shape = Enum.PartType.Cylinder,
+		Size = Vector3.new(1, 4.5, 4.5),
+		CFrame = CFrame.new(center + Vector3.new(0, 1.6, 6.6)) * CFrame.Angles(0, math.rad(90), 0),
+		Color = Color3.fromRGB(30, 20, 14),
+		Material = Enum.Material.SmoothPlastic,
+		CanCollide = false,
+		Parent = burrowModel,
+	})
+
+	-- Little welcome sign.
+	makePart({
+		Name = "SignPost",
+		Size = Vector3.new(0.4, 3.5, 0.4),
+		CFrame = CFrame.new(center + Vector3.new(4.5, 1.75, 8.5)),
+		Color = Color3.fromRGB(110, 76, 44),
+		Material = Enum.Material.Wood,
+		Parent = burrowModel,
+	})
+	local board = makePart({
+		Name = "SignBoard",
+		Size = Vector3.new(3.6, 1.6, 0.25),
+		CFrame = CFrame.new(center + Vector3.new(4.5, 3.6, 8.5)),
+		Color = Color3.fromRGB(196, 150, 96),
+		Material = Enum.Material.Wood,
+		Parent = burrowModel,
+	})
+	local gui = Instance.new("SurfaceGui")
+	gui.Face = Enum.NormalId.Back
+	gui.PixelsPerStud = 40
+	gui.Parent = board
+	local label = Instance.new("TextLabel")
+	label.Size = UDim2.fromScale(1, 1)
+	label.BackgroundTransparency = 1
+	label.Text = "Bunny Burrow\nProtect it!"
+	label.TextScaled = true
+	label.Font = Enum.Font.FredokaOne
+	label.TextColor3 = Color3.fromRGB(70, 40, 20)
+	label.Parent = gui
+
+	burrowModel.PrimaryPart = mound
+	burrowModel.Parent = folder
+	return mound
+end
+
+local function buildFence(folder: Folder, half: number)
+	local fence = Instance.new("Model")
+	fence.Name = "Fence"
+	local wood = Color3.fromRGB(214, 180, 130)
+	local step = 8
+	for i = -half, half, step do
+		for _, pos in { Vector3.new(i, 1.5, -half), Vector3.new(i, 1.5, half), Vector3.new(-half, 1.5, i), Vector3.new(half, 1.5, i) } do
+			makePart({ Name = "Post", Size = Vector3.new(0.8, 3, 0.8), CFrame = CFrame.new(pos), Color = wood, Material = Enum.Material.Wood, Parent = fence })
+		end
+	end
+	for _, rail in {
+		{ Vector3.new(0, 2.2, -half), Vector3.new(half * 2, 0.4, 0.3) },
+		{ Vector3.new(0, 2.2, half), Vector3.new(half * 2, 0.4, 0.3) },
+		{ Vector3.new(-half, 2.2, 0), Vector3.new(0.3, 0.4, half * 2) },
+		{ Vector3.new(half, 2.2, 0), Vector3.new(0.3, 0.4, half * 2) },
+	} do
+		makePart({ Name = "Rail", Size = rail[2], CFrame = CFrame.new(rail[1]), Color = wood, Material = Enum.Material.Wood, CanCollide = false, Parent = fence })
+	end
+	fence.Parent = folder
+end
+
+local function buildCarrotPatch(folder: Folder, origin: Vector3)
+	local patch = Instance.new("Model")
+	patch.Name = "CarrotPatch"
+	makePart({
+		Name = "Soil",
+		Size = Vector3.new(12, 0.3, 8),
+		CFrame = CFrame.new(origin + Vector3.new(0, 0.15, 0)),
+		Color = Color3.fromRGB(94, 62, 40),
+		Material = Enum.Material.Ground,
+		CanCollide = false,
+		Parent = patch,
+	})
+	for x = -4.5, 4.5, 3 do
+		for z = -2.5, 2.5, 2.5 do
+			local base = origin + Vector3.new(x, 0.3, z)
+			makePart({ Name = "CarrotTop", Size = Vector3.new(0.6, 0.4, 0.6), CFrame = CFrame.new(base + Vector3.new(0, 0.2, 0)), Color = Color3.fromRGB(240, 130, 30), CanCollide = false, Parent = patch })
+			makePart({ Name = "Leaves", Size = Vector3.new(0.3, 1.2, 0.3), CFrame = CFrame.new(base + Vector3.new(0, 1, 0)) * CFrame.Angles(0, 0, math.rad(12)), Color = Color3.fromRGB(70, 170, 60), CanCollide = false, Parent = patch })
+		end
+	end
+	patch.Parent = folder
+end
+
+local function buildTree(folder: Folder, position: Vector3, scale: number)
+	local tree = Instance.new("Model")
+	tree.Name = "Tree"
+	makePart({ Name = "Trunk", Size = Vector3.new(1.6, 8, 1.6) * scale, CFrame = CFrame.new(position + Vector3.new(0, 4 * scale, 0)), Color = Color3.fromRGB(110, 76, 44), Material = Enum.Material.Wood, Parent = tree })
+	makePart({ Name = "Leaves", Shape = Enum.PartType.Ball, Size = Vector3.new(9, 9, 9) * scale, CFrame = CFrame.new(position + Vector3.new(0, 10 * scale, 0)), Color = Color3.fromRGB(74, 150, 62), Material = Enum.Material.Grass, Parent = tree })
+	tree.Parent = folder
+end
+
+local function buildFlowers(folder: Folder, rng: Random)
+	local flowers = Instance.new("Model")
+	flowers.Name = "Flowers"
+	local colors = {
+		Color3.fromRGB(255, 120, 170),
+		Color3.fromRGB(255, 230, 90),
+		Color3.fromRGB(170, 130, 255),
+		Color3.fromRGB(255, 255, 255),
+	}
+	for _ = 1, 70 do
+		local pos = Vector3.new(rng:NextNumber(-95, 95), 0, rng:NextNumber(-95, 95))
+		-- keep paths and burrow area clear
+		if pos.Magnitude > 16 and math.abs(pos.X) > 5 and math.abs(pos.Z) > 5 then
+			makePart({ Name = "Stem", Size = Vector3.new(0.2, 1, 0.2), CFrame = CFrame.new(pos + Vector3.new(0, 0.5, 0)), Color = Color3.fromRGB(60, 140, 50), CanCollide = false, Parent = flowers })
+			makePart({ Name = "Bloom", Shape = Enum.PartType.Ball, Size = Vector3.new(0.8, 0.8, 0.8), CFrame = CFrame.new(pos + Vector3.new(0, 1.1, 0)), Color = colors[rng:NextInteger(1, #colors)], Material = Enum.Material.SmoothPlastic, CanCollide = false, Parent = flowers })
+		end
+	end
+	flowers.Parent = folder
+end
+
+local function buildPaths(folder: Folder, half: number)
+	local paths = Instance.new("Model")
+	paths.Name = "DirtPaths"
+	local dirt = Color3.fromRGB(176, 140, 96)
+	makePart({ Name = "PathNS", Size = Vector3.new(7, 0.1, half * 2), CFrame = CFrame.new(0, 0.05, 0), Color = dirt, Material = Enum.Material.Sand, CanCollide = false, Parent = paths })
+	makePart({ Name = "PathEW", Size = Vector3.new(half * 2, 0.1, 7), CFrame = CFrame.new(0, 0.05, 0), Color = dirt, Material = Enum.Material.Sand, CanCollide = false, Parent = paths })
+	flatDisk(paths, "Clearing", Vector3.new(0, 0.06, 0), 26, 0.1, dirt, Enum.Material.Sand)
+	paths.Parent = folder
+end
+
+local function buildFoxDens(folder: Folder, spawns: { Vector3 })
+	local dens = Instance.new("Model")
+	dens.Name = "FoxDens"
+	for i, pos in spawns do
+		makePart({
+			Name = "FoxDen" .. i,
+			Shape = Enum.PartType.Ball,
+			Size = Vector3.new(10, 6, 10),
+			CFrame = CFrame.new(pos + Vector3.new(0, 0, 0)),
+			Color = Color3.fromRGB(60, 90, 50),
+			Material = Enum.Material.Grass,
+			CanCollide = false,
+			Parent = dens,
+		})
+		flatDisk(dens, "DenMarker" .. i, pos + Vector3.new(0, 0.08, 0), 12, 0.1, Color3.fromRGB(150, 60, 40))
+	end
+	dens.Parent = folder
+end
+
+function MapBuilder.Build(): MapInfo
+	local folder = getOrCreateFolder(Workspace, "BunnyGuardianMap")
+	local half = 100
+	local spawns = {
+		Vector3.new(0, 0, -half + 6),
+		Vector3.new(half - 6, 0, 0),
+		Vector3.new(-half + 6, 0, 0),
+		Vector3.new(half - 14, 0, half - 14),
+		Vector3.new(-half + 14, 0, -half + 14),
+	}
+
+	local garden = folder:FindFirstChild("Garden")
+	local burrow: BasePart
+	if garden then
+		-- Already built (e.g. saved into the place); reuse it.
+		local existing = garden:FindFirstChild("Burrow")
+		burrow = (existing and (existing :: Model).PrimaryPart) :: BasePart
+	end
+
+	if not burrow then
+		if garden then
+			garden:Destroy()
+		end
+		local newGarden = Instance.new("Folder")
+		newGarden.Name = "Garden"
+		local rng = Random.new(42)
+		buildPaths(newGarden, half)
+		buildFence(newGarden, half)
+		buildCarrotPatch(newGarden, Vector3.new(-22, 0, 22))
+		buildCarrotPatch(newGarden, Vector3.new(22, 0, 22))
+		buildCarrotPatch(newGarden, Vector3.new(-22, 0, -22))
+		buildCarrotPatch(newGarden, Vector3.new(22, 0, -22))
+		for _, pos in { Vector3.new(-70, 0, -40), Vector3.new(65, 0, 45), Vector3.new(-55, 0, 70), Vector3.new(70, 0, -70), Vector3.new(-80, 0, 30), Vector3.new(40, 0, 80) } do
+			buildTree(newGarden, pos, rng:NextNumber(0.8, 1.3))
+		end
+		buildFlowers(newGarden, rng)
+		buildFoxDens(newGarden, spawns)
+		burrow = buildBurrow(newGarden)
+		newGarden.Parent = folder
+	end
+
+	local enemyFolder = getOrCreateFolder(folder, "Enemies")
+	local effectsFolder = getOrCreateFolder(folder, "Effects")
+	enemyFolder:ClearAllChildren()
+	effectsFolder:ClearAllChildren()
+
+	return {
+		Folder = folder,
+		Burrow = burrow,
+		EnemyFolder = enemyFolder,
+		EffectsFolder = effectsFolder,
+		FoxSpawns = spawns,
+	}
+end
+
+return MapBuilder
+]]></string>
+          </Properties>
+        </Item>
+        <Item class="ModuleScript" referent="17">
+          <Properties>
+            <string name="Name">PlayerDataService</string>
+            <string name="Source"><![CDATA[-- PlayerDataService: coins, mana and upgrade levels.
+-- Values are stored as Player attributes so the client HUD can read them
+-- directly; only the server ever writes them.
+
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local Config = require(ReplicatedStorage:WaitForChild("BunnyGuardian"):WaitForChild("Shared"):WaitForChild("Config"))
+
+local PlayerDataService = {}
+
+local function upgradeAttr(upgradeId: string): string
+	return "Upgrade_" .. upgradeId
+end
+
+function PlayerDataService.GetUpgradeLevel(player: Player, upgradeId: string): number
+	return player:GetAttribute(upgradeAttr(upgradeId)) or 0
+end
+
+function PlayerDataService.SetUpgradeLevel(player: Player, upgradeId: string, level: number)
+	player:SetAttribute(upgradeAttr(upgradeId), level)
+	if upgradeId == "MaxMana" then
+		local maxMana = Config.Mana.Max + level * Config.Upgrades.MaxMana.PerLevel
+		player:SetAttribute("MaxMana", maxMana)
+	end
+end
+
+function PlayerDataService.GetDamageMultiplier(player: Player, upgradeId: string): number
+	local upgrade = Config.Upgrades[upgradeId]
+	if not upgrade or not upgrade.PerLevel then
+		return 1
+	end
+	return 1 + PlayerDataService.GetUpgradeLevel(player, upgradeId) * upgrade.PerLevel
+end
+
+function PlayerDataService.GetCoins(player: Player): number
+	return player:GetAttribute("Coins") or 0
+end
+
+function PlayerDataService.AddCoins(player: Player, amount: number)
+	player:SetAttribute("Coins", PlayerDataService.GetCoins(player) + amount)
+end
+
+function PlayerDataService.TrySpendCoins(player: Player, amount: number): boolean
+	local coins = PlayerDataService.GetCoins(player)
+	if coins < amount then
+		return false
+	end
+	player:SetAttribute("Coins", coins - amount)
+	return true
+end
+
+function PlayerDataService.TrySpendMana(player: Player, amount: number): boolean
+	if amount <= 0 then
+		return true
+	end
+	local mana = player:GetAttribute("Mana") or 0
+	if mana < amount then
+		return false
+	end
+	player:SetAttribute("Mana", mana - amount)
+	return true
+end
+
+function PlayerDataService.Reset(player: Player)
+	player:SetAttribute("Coins", 0)
+	for upgradeId in Config.Upgrades do
+		PlayerDataService.SetUpgradeLevel(player, upgradeId, 0)
+	end
+	player:SetAttribute("MaxMana", Config.Mana.Max)
+	player:SetAttribute("Mana", Config.Mana.Max)
+end
+
+function PlayerDataService.ResetAll()
+	for _, player in Players:GetPlayers() do
+		PlayerDataService.Reset(player)
+	end
+end
+
+function PlayerDataService.Init()
+	Players.PlayerAdded:Connect(PlayerDataService.Reset)
+	for _, player in Players:GetPlayers() do
+		PlayerDataService.Reset(player)
+	end
+
+	-- Mana regeneration
+	task.spawn(function()
+		local tick = 0.1
+		while true do
+			task.wait(tick)
+			for _, player in Players:GetPlayers() do
+				local maxMana = player:GetAttribute("MaxMana") or Config.Mana.Max
+				local mana = player:GetAttribute("Mana") or 0
+				if mana < maxMana then
+					local regen = Config.Mana.RegenPerSecond
+						+ PlayerDataService.GetUpgradeLevel(player, "MaxMana") * Config.Upgrades.MaxMana.RegenPerLevel
+					player:SetAttribute("Mana", math.min(maxMana, mana + regen * tick))
+				end
+			end
+		end
+	end)
+end
+
+return PlayerDataService
+]]></string>
+          </Properties>
+        </Item>
+        <Item class="ModuleScript" referent="18">
+          <Properties>
+            <string name="Name">UpgradeService</string>
+            <string name="Source"><![CDATA[-- UpgradeService: handles the upgrade buttons (server validated).
+
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local BunnyGuardian = ReplicatedStorage:WaitForChild("BunnyGuardian")
+local Config = require(BunnyGuardian:WaitForChild("Shared"):WaitForChild("Config"))
+local Remotes = BunnyGuardian:WaitForChild("Remotes")
+
+local PlayerDataService = require(script.Parent.PlayerDataService)
+
+local UpgradeService = {}
+
+type InitOptions = {
+	-- Heals the burrow; returns false if it is already at full health.
+	RepairBurrow: (amount: number) -> boolean,
+}
+
+function UpgradeService.Init(opts: InitOptions)
+	local buyRemote = Remotes:WaitForChild("BuyUpgrade") :: RemoteFunction
+
+	buyRemote.OnServerInvoke = function(player: Player, upgradeId: any): (boolean, string)
+		if typeof(upgradeId) ~= "string" then
+			return false, "Invalid upgrade"
+		end
+		local upgrade = Config.Upgrades[upgradeId]
+		if not upgrade then
+			return false, "Invalid upgrade"
+		end
+
+		local level = PlayerDataService.GetUpgradeLevel(player, upgradeId)
+		if level >= upgrade.MaxLevel then
+			return false, upgrade.DisplayName .. " is maxed!"
+		end
+
+		local cost = Config.GetUpgradeCost(upgradeId, level)
+		if PlayerDataService.GetCoins(player) < cost then
+			return false, "Not enough coins (" .. cost .. " needed)"
+		end
+
+		if upgradeId == "RepairBurrow" then
+			if not PlayerDataService.TrySpendCoins(player, cost) then
+				return false, "Not enough coins"
+			end
+			if not opts.RepairBurrow(upgrade.Heal) then
+				PlayerDataService.AddCoins(player, cost) -- refund
+				return false, "The burrow is already at full health"
+			end
+			return true, "Burrow repaired!"
+		end
+
+		if not PlayerDataService.TrySpendCoins(player, cost) then
+			return false, "Not enough coins"
+		end
+		PlayerDataService.SetUpgradeLevel(player, upgradeId, level + 1)
+		return true, upgrade.DisplayName .. " upgraded to Lv " .. (level + 1) .. "!"
+	end
+end
+
+return UpgradeService
+]]></string>
+          </Properties>
+        </Item>
+      </Item>
+    </Item>
+  </Item>
+  <Item class="StarterPlayer" referent="19">
+    <Properties>
+      <string name="Name">StarterPlayer</string>
+    </Properties>
+    <Item class="StarterPlayerScripts" referent="20">
+      <Properties>
+        <string name="Name">StarterPlayerScripts</string>
+      </Properties>
+      <Item class="Folder" referent="21">
+        <Properties>
+          <string name="Name">BunnyGuardianClient</string>
+        </Properties>
+        <Item class="LocalScript" referent="22">
+          <Properties>
+            <string name="Name">ClientMain</string>
+            <string name="Source"><![CDATA[-- Bunny Guardian client entry point: builds the HUD and hooks up controls.
+
+local Modules = script.Parent:WaitForChild("Modules")
+local HUD = require(Modules:WaitForChild("HUD"))
+local AbilityInput = require(Modules:WaitForChild("AbilityInput"))
+
+HUD.Init(AbilityInput.Use)
+AbilityInput.Init()
+]]></string>
+          </Properties>
+        </Item>
+        <Item class="Folder" referent="23">
+          <Properties>
+            <string name="Name">Modules</string>
+          </Properties>
+          <Item class="ModuleScript" referent="24">
+            <Properties>
+              <string name="Name">AbilityInput</string>
+              <string name="Source"><![CDATA[-- AbilityInput: keyboard / mouse controls and aiming.
+--   Left click or F : Carrot Throw (aims at the mouse)
+--   Q               : Hurricane Kick (aims at the mouse)
+--   E               : Ear Cyclone
+-- On-screen buttons (from the HUD) fire in the direction the rabbit faces.
+
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local Workspace = game:GetService("Workspace")
+
+local BunnyGuardian = ReplicatedStorage:WaitForChild("BunnyGuardian")
+local Config = require(BunnyGuardian:WaitForChild("Shared"):WaitForChild("Config"))
+local UseAbilityRemote = BunnyGuardian:WaitForChild("Remotes"):WaitForChild("UseAbility") :: RemoteEvent
+
+local player = Players.LocalPlayer
+
+local AbilityInput = {}
+
+local KEYBINDS: { [Enum.KeyCode]: string } = {
+	[Enum.KeyCode.F] = "CarrotThrow",
+	[Enum.KeyCode.Q] = "HurricaneKick",
+	[Enum.KeyCode.E] = "EarCyclone",
+	[Enum.KeyCode.ButtonR2] = "CarrotThrow",
+	[Enum.KeyCode.ButtonX] = "HurricaneKick",
+	[Enum.KeyCode.ButtonY] = "EarCyclone",
+}
+
+local function getRoot(): (BasePart?, Humanoid?)
+	local character = player.Character
+	if not character then
+		return nil, nil
+	end
+	return character:FindFirstChild("HumanoidRootPart") :: BasePart?, character:FindFirstChildOfClass("Humanoid")
+end
+
+local function flatLook(root: BasePart): Vector3
+	local look = root.CFrame.LookVector
+	local flat = Vector3.new(look.X, 0, look.Z)
+	return if flat.Magnitude > 0.01 then flat.Unit else Vector3.new(0, 0, -1)
+end
+
+local function getMouseAim(root: BasePart): Vector3
+	local camera = Workspace.CurrentCamera
+	if not camera then
+		return flatLook(root)
+	end
+	local mouse = UserInputService:GetMouseLocation()
+	local ray = camera:ViewportPointToRay(mouse.X, mouse.Y)
+	local params = RaycastParams.new()
+	params.FilterType = Enum.RaycastFilterType.Exclude
+	local ignore: { Instance } = {}
+	if player.Character then
+		table.insert(ignore, player.Character)
+	end
+	local map = Workspace:FindFirstChild("BunnyGuardianMap")
+	local effects = map and map:FindFirstChild("Effects")
+	if effects then
+		table.insert(ignore, effects)
+	end
+	params.FilterDescendantsInstances = ignore
+	local result = Workspace:Raycast(ray.Origin, ray.Direction * 1000, params)
+	local target = if result then result.Position else ray.Origin + ray.Direction * 1000
+	local flat = Vector3.new(target.X - root.Position.X, 0, target.Z - root.Position.Z)
+	if flat.Magnitude < 0.5 then
+		return flatLook(root)
+	end
+	return flat.Unit
+end
+
+local spinning = false
+local function spinKick(root: BasePart, humanoid: Humanoid, direction: Vector3)
+	if spinning then
+		return
+	end
+	spinning = true
+	humanoid.AutoRotate = false
+	local start = os.clock()
+	local duration = 0.3
+	local baseYaw = math.atan2(-direction.X, -direction.Z)
+	local connection: RBXScriptConnection
+	connection = RunService.RenderStepped:Connect(function()
+		local alpha = math.min(1, (os.clock() - start) / duration)
+		if not root.Parent then
+			connection:Disconnect()
+			spinning = false
+			return
+		end
+		root.CFrame = CFrame.new(root.Position) * CFrame.Angles(0, baseYaw + alpha * math.pi * 2, 0)
+		if alpha >= 1 then
+			connection:Disconnect()
+			humanoid.AutoRotate = true
+			spinning = false
+		end
+	end)
+end
+
+local function isReady(abilityName: string): boolean
+	local readyAt = player:GetAttribute("CD_" .. abilityName) or 0
+	if readyAt > Workspace:GetServerTimeNow() then
+		return false
+	end
+	local cfg = Config.Abilities[abilityName]
+	return (player:GetAttribute("Mana") or 0) >= (cfg.ManaCost or 0)
+end
+
+-- useMouse = true aims at the cursor; otherwise fires where the rabbit faces.
+function AbilityInput.Use(abilityName: string, useMouse: boolean?)
+	local root, humanoid = getRoot()
+	if not root or not humanoid or humanoid.Health <= 0 then
+		return
+	end
+	if not isReady(abilityName) then
+		return
+	end
+	local direction = if useMouse then getMouseAim(root) else flatLook(root)
+
+	-- face the aim direction (the client owns its character's physics)
+	if abilityName == "HurricaneKick" then
+		spinKick(root, humanoid, direction)
+	elseif abilityName == "CarrotThrow" then
+		root.CFrame = CFrame.lookAt(root.Position, root.Position + direction)
+	end
+
+	UseAbilityRemote:FireServer(abilityName, direction)
+end
+
+function AbilityInput.Init()
+	UserInputService.InputBegan:Connect(function(input: InputObject, gameProcessed: boolean)
+		if gameProcessed then
+			return
+		end
+		if input.UserInputType == Enum.UserInputType.MouseButton1 then
+			AbilityInput.Use("CarrotThrow", true)
+			return
+		end
+		local abilityName = KEYBINDS[input.KeyCode]
+		if abilityName then
+			local isGamepad = input.UserInputType.Name:find("Gamepad") ~= nil
+			AbilityInput.Use(abilityName, not isGamepad)
+		end
+	end)
+end
+
+return AbilityInput
+]]></string>
+            </Properties>
+          </Item>
+          <Item class="ModuleScript" referent="25">
+            <Properties>
+              <string name="Name">HUD</string>
+              <string name="Source"><![CDATA[-- HUD: wave counter, burrow health, boss bar, mana, coins, ability buttons,
+-- upgrade buttons and notification banner. Built entirely in code.
+
+local Players = game:GetService("Players")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
+local Workspace = game:GetService("Workspace")
+
+local BunnyGuardian = ReplicatedStorage:WaitForChild("BunnyGuardian")
+local Config = require(BunnyGuardian:WaitForChild("Shared"):WaitForChild("Config"))
+local Remotes = BunnyGuardian:WaitForChild("Remotes")
+local GameState = BunnyGuardian:WaitForChild("GameState")
+local BuyUpgradeRemote = Remotes:WaitForChild("BuyUpgrade") :: RemoteFunction
+local NotifyRemote = Remotes:WaitForChild("Notify") :: RemoteEvent
+
+local player = Players.LocalPlayer
+
+local HUD = {}
+
+local FONT = Enum.Font.FredokaOne
+local COLORS = {
+	Panel = Color3.fromRGB(255, 248, 240),
+	PanelStroke = Color3.fromRGB(120, 80, 60),
+	Text = Color3.fromRGB(70, 45, 35),
+	BarBack = Color3.fromRGB(60, 40, 35),
+	Health = Color3.fromRGB(120, 210, 90),
+	HealthLow = Color3.fromRGB(230, 70, 60),
+	Mana = Color3.fromRGB(80, 160, 255),
+	Boss = Color3.fromRGB(190, 60, 200),
+	Coin = Color3.fromRGB(255, 200, 40),
+	Kick = Color3.fromRGB(90, 220, 120),
+	Carrot = Color3.fromRGB(245, 140, 40),
+	Cyclone = Color3.fromRGB(150, 220, 230),
+	Upgrade = Color3.fromRGB(255, 225, 160),
+}
+
+------------------------------------------------------------------------
+-- Tiny UI helpers
+------------------------------------------------------------------------
+
+local function create(className: string, props: { [string]: any }, children: { Instance }?): any
+	local instance = Instance.new(className)
+	local parent = props.Parent
+	for key, value in props do
+		if key ~= "Parent" then
+			(instance :: any)[key] = value
+		end
+	end
+	for _, child in children or {} do
+		child.Parent = instance
+	end
+	instance.Parent = parent
+	return instance
+end
+
+local function corner(radius: number): UICorner
+	return create("UICorner", { CornerRadius = UDim.new(0, radius) })
+end
+
+local function stroke(color: Color3, thickness: number): UIStroke
+	return create("UIStroke", { Color = color, Thickness = thickness, ApplyStrokeMode = Enum.ApplyStrokeMode.Border })
+end
+
+local function label(props: { [string]: any }): TextLabel
+	props.BackgroundTransparency = props.BackgroundTransparency or 1
+	props.Font = props.Font or FONT
+	props.TextColor3 = props.TextColor3 or COLORS.Text
+	props.TextScaled = if props.TextScaled == nil then true else props.TextScaled
+	return create("TextLabel", props)
+end
+
+type Bar = { Frame: Frame, Fill: Frame, Text: TextLabel }
+
+local function makeBar(parent: Instance, position: UDim2, size: UDim2, color: Color3): Bar
+	local frame = create("Frame", {
+		Position = position,
+		Size = size,
+		BackgroundColor3 = COLORS.BarBack,
+		BorderSizePixel = 0,
+		Parent = parent,
+	}, { corner(8), stroke(COLORS.PanelStroke, 2) })
+	local fill = create("Frame", {
+		Name = "Fill",
+		Size = UDim2.fromScale(1, 1),
+		BackgroundColor3 = color,
+		BorderSizePixel = 0,
+		Parent = frame,
+	}, { corner(8) })
+	local text = label({
+		Size = UDim2.new(1, -8, 1, -4),
+		Position = UDim2.fromOffset(4, 2),
+		TextColor3 = Color3.new(1, 1, 1),
+		ZIndex = 2,
+		Parent = frame,
+	})
+	create("UIStroke", { Color = Color3.new(0, 0, 0), Thickness = 1.5, Transparency = 0.3, Parent = text })
+	return { Frame = frame, Fill = fill, Text = text }
+end
+
+local function setBar(bar: Bar, value: number, maxValue: number, text: string)
+	local ratio = if maxValue > 0 then math.clamp(value / maxValue, 0, 1) else 0
+	bar.Fill.Size = UDim2.fromScale(ratio, 1)
+	bar.Fill.Visible = ratio > 0
+	bar.Text.Text = text
+end
+
+------------------------------------------------------------------------
+-- Build
+------------------------------------------------------------------------
+
+local screen: ScreenGui
+local waveLabel: TextLabel
+local statusLabel: TextLabel
+local burrowBar: Bar
+local bossBar: Bar
+local bossFrame: Frame
+local manaBar: Bar
+local coinsLabel: TextLabel
+local banner: TextLabel
+local toast: TextLabel
+local abilityButtons: { [string]: { Button: TextButton, Overlay: Frame, Timer: TextLabel } } = {}
+local upgradeButtons: { [string]: TextButton } = {}
+
+local function buildTop()
+	local top = create("Frame", {
+		Name = "TopPanel",
+		AnchorPoint = Vector2.new(0.5, 0),
+		Position = UDim2.new(0.5, 0, 0, 8),
+		Size = UDim2.fromOffset(380, 104),
+		BackgroundColor3 = COLORS.Panel,
+		BackgroundTransparency = 0.08,
+		Parent = screen,
+	}, { corner(14), stroke(COLORS.PanelStroke, 3) })
+	label({ Text = "Bunny Guardian: Rise of the Rabbit", Size = UDim2.new(1, -16, 0, 18), Position = UDim2.fromOffset(8, 4), TextColor3 = Color3.fromRGB(200, 90, 120), Parent = top })
+	waveLabel = label({ Text = "Wave 0 / 10", Size = UDim2.new(0.5, -8, 0, 28), Position = UDim2.fromOffset(8, 24), TextXAlignment = Enum.TextXAlignment.Left, Parent = top })
+	statusLabel = label({ Text = "", Size = UDim2.new(0.5, -8, 0, 22), Position = UDim2.new(0.5, 0, 0, 27), TextXAlignment = Enum.TextXAlignment.Right, Parent = top })
+	label({ Text = "Burrow", Size = UDim2.new(0, 70, 0, 20), Position = UDim2.fromOffset(8, 66), TextXAlignment = Enum.TextXAlignment.Left, Parent = top })
+	burrowBar = makeBar(top, UDim2.fromOffset(80, 60), UDim2.new(1, -92, 0, 32), COLORS.Health)
+
+	bossFrame = create("Frame", {
+		Name = "BossPanel",
+		AnchorPoint = Vector2.new(0.5, 0),
+		Position = UDim2.new(0.5, 0, 0, 120),
+		Size = UDim2.fromOffset(460, 54),
+		BackgroundColor3 = Color3.fromRGB(50, 25, 55),
+		BackgroundTransparency = 0.1,
+		Visible = false,
+		Parent = screen,
+	}, { corner(12), stroke(Color3.fromRGB(255, 200, 80), 3) })
+	label({ Text = "THE GREAT EAGLE", Size = UDim2.new(1, -16, 0, 18), Position = UDim2.fromOffset(8, 3), TextColor3 = Color3.fromRGB(255, 220, 120), Parent = bossFrame })
+	bossBar = makeBar(bossFrame, UDim2.fromOffset(10, 23), UDim2.new(1, -20, 0, 24), COLORS.Boss)
+end
+
+local function buildBottomLeft()
+	local panel = create("Frame", {
+		Name = "StatsPanel",
+		AnchorPoint = Vector2.new(0, 1),
+		Position = UDim2.new(0, 12, 1, -12),
+		Size = UDim2.fromOffset(250, 84),
+		BackgroundColor3 = COLORS.Panel,
+		BackgroundTransparency = 0.08,
+		Parent = screen,
+	}, { corner(14), stroke(COLORS.PanelStroke, 3) })
+	coinsLabel = label({ Text = "Coins: 0", Size = UDim2.new(1, -16, 0, 30), Position = UDim2.fromOffset(10, 6), TextXAlignment = Enum.TextXAlignment.Left, TextColor3 = Color3.fromRGB(190, 130, 0), Parent = panel })
+	label({ Text = "Mana", Size = UDim2.fromOffset(50, 20), Position = UDim2.fromOffset(10, 50), TextXAlignment = Enum.TextXAlignment.Left, Parent = panel })
+	manaBar = makeBar(panel, UDim2.fromOffset(62, 44), UDim2.new(1, -74, 0, 30), COLORS.Mana)
+end
+
+local function buildAbilities(onUse: (string, boolean?) -> ())
+	local bar = create("Frame", {
+		Name = "AbilityBar",
+		AnchorPoint = Vector2.new(0.5, 1),
+		Position = UDim2.new(0.5, 0, 1, -12),
+		Size = UDim2.fromOffset(3 * 96 + 2 * 10, 96),
+		BackgroundTransparency = 1,
+		Parent = screen,
+	}, {
+		create("UIListLayout", { FillDirection = Enum.FillDirection.Horizontal, Padding = UDim.new(0, 10), HorizontalAlignment = Enum.HorizontalAlignment.Center }),
+	})
+	local colors = { CarrotThrow = COLORS.Carrot, HurricaneKick = COLORS.Kick, EarCyclone = COLORS.Cyclone }
+	for index, abilityName in Config.AbilityOrder do
+		local cfg = Config.Abilities[abilityName]
+		local button = create("TextButton", {
+			Name = abilityName,
+			LayoutOrder = index,
+			Size = UDim2.fromOffset(96, 96),
+			BackgroundColor3 = colors[abilityName],
+			AutoButtonColor = true,
+			Text = "",
+			Parent = bar,
+		}, { corner(16), stroke(COLORS.PanelStroke, 3) })
+		label({ Text = cfg.DisplayName, Size = UDim2.new(1, -10, 0, 34), Position = UDim2.fromOffset(5, 14), TextColor3 = Color3.new(1, 1, 1), ZIndex = 2, Parent = button })
+		local hint = if cfg.ManaCost > 0 then cfg.KeyHint .. "  •  " .. cfg.ManaCost .. " mana" else cfg.KeyHint
+		label({ Text = hint, Size = UDim2.new(1, -10, 0, 18), Position = UDim2.new(0, 5, 1, -26), TextColor3 = Color3.fromRGB(60, 40, 30), ZIndex = 2, Parent = button })
+		local overlay = create("Frame", {
+			Name = "Cooldown",
+			AnchorPoint = Vector2.new(0, 1),
+			Position = UDim2.fromScale(0, 1),
+			Size = UDim2.fromScale(1, 0),
+			BackgroundColor3 = Color3.new(0, 0, 0),
+			BackgroundTransparency = 0.45,
+			ZIndex = 3,
+			Parent = button,
+		}, { corner(16) })
+		local timer = label({ Text = "", Size = UDim2.fromScale(1, 0.5), Position = UDim2.fromScale(0, 0.25), TextColor3 = Color3.new(1, 1, 1), ZIndex = 4, Parent = button })
+		button.Activated:Connect(function()
+			onUse(abilityName, false)
+		end)
+		abilityButtons[abilityName] = { Button = button, Overlay = overlay, Timer = timer }
+	end
+end
+
+local function showToast(text: string, good: boolean)
+	toast.Text = text
+	toast.TextColor3 = if good then Color3.fromRGB(40, 140, 60) else Color3.fromRGB(190, 50, 50)
+	toast.Visible = true
+	local myText = text
+	task.delay(2, function()
+		if toast.Text == myText then
+			toast.Visible = false
+		end
+	end)
+end
+
+local function refreshUpgrades()
+	local coins = player:GetAttribute("Coins") or 0
+	for upgradeId, button in upgradeButtons do
+		local upgrade = Config.Upgrades[upgradeId]
+		local level = player:GetAttribute("Upgrade_" .. upgradeId) or 0
+		local cost = Config.GetUpgradeCost(upgradeId, level)
+		local maxed = level >= upgrade.MaxLevel
+		local title = if upgradeId == "RepairBurrow" then upgrade.DisplayName else upgrade.DisplayName .. "  Lv " .. level
+		local costText = if maxed then "MAX" else cost .. " coins"
+		button.Text = title .. "\n" .. upgrade.Description .. "  —  " .. costText
+		local affordable = not maxed and coins >= cost
+		button.BackgroundColor3 = if affordable then COLORS.Upgrade else Color3.fromRGB(215, 205, 195)
+	end
+end
+
+local function buildUpgrades()
+	local panel = create("Frame", {
+		Name = "UpgradePanel",
+		AnchorPoint = Vector2.new(1, 0.5),
+		Position = UDim2.new(1, -12, 0.5, 0),
+		Size = UDim2.fromOffset(240, 40 + #Config.UpgradeOrder * 62),
+		BackgroundColor3 = COLORS.Panel,
+		BackgroundTransparency = 0.08,
+		Parent = screen,
+	}, { corner(14), stroke(COLORS.PanelStroke, 3) })
+	label({ Text = "Upgrades", Size = UDim2.new(1, -16, 0, 26), Position = UDim2.fromOffset(8, 6), Parent = panel })
+	local list = create("Frame", {
+		Size = UDim2.new(1, -16, 1, -42),
+		Position = UDim2.fromOffset(8, 36),
+		BackgroundTransparency = 1,
+		Parent = panel,
+	}, { create("UIListLayout", { Padding = UDim.new(0, 6), SortOrder = Enum.SortOrder.LayoutOrder }) })
+
+	for index, upgradeId in Config.UpgradeOrder do
+		local button = create("TextButton", {
+			Name = upgradeId,
+			LayoutOrder = index,
+			Size = UDim2.new(1, 0, 0, 56),
+			BackgroundColor3 = COLORS.Upgrade,
+			Font = FONT,
+			TextScaled = true,
+			TextColor3 = COLORS.Text,
+			Text = "",
+			Parent = list,
+		}, { corner(10), stroke(COLORS.PanelStroke, 2), create("UIPadding", { PaddingLeft = UDim.new(0, 6), PaddingRight = UDim.new(0, 6), PaddingTop = UDim.new(0, 4), PaddingBottom = UDim.new(0, 4) }) })
+		local busy = false
+		button.Activated:Connect(function()
+			if busy then
+				return
+			end
+			busy = true
+			local ok, success, message = pcall(function()
+				return BuyUpgradeRemote:InvokeServer(upgradeId)
+			end)
+			busy = false
+			if ok then
+				showToast(message or "", success == true)
+			else
+				showToast("Upgrade failed, try again", false)
+			end
+			refreshUpgrades()
+		end)
+		upgradeButtons[upgradeId] = button
+	end
+
+	toast = label({
+		Name = "Toast",
+		AnchorPoint = Vector2.new(1, 0),
+		Position = UDim2.new(1, 0, 1, 6),
+		Size = UDim2.new(1, 0, 0, 22),
+		Visible = false,
+		Parent = panel,
+	})
+end
+
+local function buildBanner()
+	banner = label({
+		Name = "Banner",
+		AnchorPoint = Vector2.new(0.5, 0.5),
+		Position = UDim2.fromScale(0.5, 0.36),
+		Size = UDim2.new(0.7, 0, 0, 56),
+		TextColor3 = Color3.new(1, 1, 1),
+		TextTransparency = 1,
+		Parent = screen,
+	})
+	create("UIStroke", { Name = "Outline", Color = Color3.fromRGB(60, 30, 20), Thickness = 3, Transparency = 1, Parent = banner })
+
+	label({
+		Name = "ControlsHint",
+		AnchorPoint = Vector2.new(0.5, 1),
+		Position = UDim2.new(0.5, 0, 1, -114),
+		Size = UDim2.fromOffset(520, 20),
+		TextColor3 = Color3.new(1, 1, 1),
+		Text = "Click / F: Carrot   •   Q: Hurricane Kick (mana)   •   E: Ear Cyclone (slows)",
+		Parent = screen,
+	})
+end
+
+------------------------------------------------------------------------
+-- Live updates
+------------------------------------------------------------------------
+
+local BANNER_COLORS = {
+	info = Color3.fromRGB(255, 255, 255),
+	warning = Color3.fromRGB(255, 210, 120),
+	success = Color3.fromRGB(150, 255, 150),
+	boss = Color3.fromRGB(255, 120, 120),
+}
+
+local bannerToken = 0
+local function showBanner(text: string, kind: string?)
+	bannerToken += 1
+	local myToken = bannerToken
+	banner.Text = text
+	banner.TextColor3 = BANNER_COLORS[kind or "info"] or BANNER_COLORS.info
+	local outline = banner:FindFirstChild("Outline") :: UIStroke
+	banner.TextTransparency = 0
+	outline.Transparency = 0
+	task.delay(2.5, function()
+		if bannerToken ~= myToken then
+			return
+		end
+		local info = TweenInfo.new(0.6)
+		TweenService:Create(banner, info, { TextTransparency = 1 }):Play()
+		TweenService:Create(outline, info, { Transparency = 1 }):Play()
+	end)
+end
+
+local function refreshGameState()
+	local wave = GameState:GetAttribute("Wave") or 0
+	local total = GameState:GetAttribute("TotalWaves") or Config.Waves.Total
+	waveLabel.Text = "Wave " .. wave .. " / " .. total
+
+	local status = GameState:GetAttribute("Status") or "Waiting"
+	local timer = GameState:GetAttribute("Timer") or 0
+	if status == "Intermission" then
+		statusLabel.Text = "Next wave in " .. timer .. "s"
+	elseif status == "Wave" then
+		statusLabel.Text = "Foxes left: " .. (GameState:GetAttribute("EnemiesLeft") or 0)
+	elseif status == "Victory" then
+		statusLabel.Text = "Victory! Restart in " .. timer .. "s"
+	elseif status == "GameOver" then
+		statusLabel.Text = "Burrow lost! Restart in " .. timer .. "s"
+	else
+		statusLabel.Text = "Waiting for players..."
+	end
+
+	local health = GameState:GetAttribute("BurrowHealth") or 0
+	local maxHealth = GameState:GetAttribute("BurrowMaxHealth") or Config.Burrow.MaxHealth
+	setBar(burrowBar, health, maxHealth, math.ceil(health) .. " / " .. maxHealth)
+	local ratio = if maxHealth > 0 then health / maxHealth else 0
+	burrowBar.Fill.BackgroundColor3 = COLORS.HealthLow:Lerp(COLORS.Health, ratio)
+
+	local bossActive = GameState:GetAttribute("BossActive") == true
+	bossFrame.Visible = bossActive
+	if bossActive then
+		local bossHealth = GameState:GetAttribute("BossHealth") or 0
+		local bossMax = GameState:GetAttribute("BossMaxHealth") or 1
+		setBar(bossBar, bossHealth, bossMax, math.ceil(bossHealth) .. " / " .. bossMax)
+	end
+end
+
+local function refreshPlayer()
+	local coins = player:GetAttribute("Coins") or 0
+	coinsLabel.Text = "Coins: " .. coins
+	local mana = player:GetAttribute("Mana") or 0
+	local maxMana = player:GetAttribute("MaxMana") or Config.Mana.Max
+	setBar(manaBar, mana, maxMana, math.floor(mana) .. " / " .. maxMana)
+end
+
+local function refreshCooldowns()
+	local now = Workspace:GetServerTimeNow()
+	local mana = player:GetAttribute("Mana") or 0
+	for abilityName, ui in abilityButtons do
+		local cfg = Config.Abilities[abilityName]
+		local remaining = math.max(0, (player:GetAttribute("CD_" .. abilityName) or 0) - now)
+		ui.Overlay.Size = UDim2.fromScale(1, math.clamp(remaining / cfg.Cooldown, 0, 1))
+		if remaining > 0.05 then
+			ui.Timer.Text = string.format("%.1f", remaining)
+		elseif mana < (cfg.ManaCost or 0) then
+			ui.Timer.Text = "No mana"
+		else
+			ui.Timer.Text = ""
+		end
+	end
+end
+
+function HUD.Init(onUseAbility: (string, boolean?) -> ())
+	local playerGui = player:WaitForChild("PlayerGui")
+	local existing = playerGui:FindFirstChild("BunnyGuardianHUD")
+	if existing then
+		existing:Destroy()
+	end
+	screen = create("ScreenGui", {
+		Name = "BunnyGuardianHUD",
+		ResetOnSpawn = false,
+		IgnoreGuiInset = false,
+		ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
+		Parent = playerGui,
+	})
+
+	buildTop()
+	buildBottomLeft()
+	buildAbilities(onUseAbility)
+	buildUpgrades()
+	buildBanner()
+
+	GameState.AttributeChanged:Connect(refreshGameState)
+	player.AttributeChanged:Connect(function(attribute: string)
+		if attribute == "Coins" or attribute:sub(1, 8) == "Upgrade_" then
+			refreshUpgrades()
+		end
+		refreshPlayer()
+	end)
+	NotifyRemote.OnClientEvent:Connect(showBanner)
+	RunService.RenderStepped:Connect(refreshCooldowns)
+
+	refreshGameState()
+	refreshPlayer()
+	refreshUpgrades()
+	showBanner("Protect the burrow from the foxes!", "info")
+end
+
+return HUD
+]]></string>
+            </Properties>
+          </Item>
+        </Item>
+      </Item>
+    </Item>
+  </Item>
+  <Item class="Workspace" referent="26">
+    <Properties>
+      <string name="Name">Workspace</string>
+      <bool name="NeedsPivotMigration">false</bool>
+    </Properties>
+    <Item class="Part" referent="27">
+      <Properties>
+        <string name="Name">BunnyGuardianGround</string>
+        <bool name="Anchored">true</bool>
+        <token name="BottomSurface">0</token>
+        <CoordinateFrame name="CFrame">
+          <X>0</X>
+          <Y>-1</Y>
+          <Z>0</Z>
+          <R00>1</R00>
+          <R01>0</R01>
+          <R02>0</R02>
+          <R10>0</R10>
+          <R11>1</R11>
+          <R12>0</R12>
+          <R20>0</R20>
+          <R21>0</R21>
+          <R22>1</R22>
+        </CoordinateFrame>
+        <Color3uint8 name="Color3uint8">7059540</Color3uint8>
+        <bool name="Locked">true</bool>
+        <token name="Material">1280</token>
+        <Vector3 name="size">
+          <X>220</X>
+          <Y>2</Y>
+          <Z>220</Z>
+        </Vector3>
+        <token name="TopSurface">0</token>
+      </Properties>
+    </Item>
+    <Item class="SpawnLocation" referent="28">
+      <Properties>
+        <string name="Name">BunnyGuardianSpawn</string>
+        <bool name="Anchored">true</bool>
+        <CoordinateFrame name="CFrame">
+          <X>0</X>
+          <Y>0.2</Y>
+          <Z>22</Z>
+          <R00>1</R00>
+          <R01>0</R01>
+          <R02>0</R02>
+          <R10>0</R10>
+          <R11>1</R11>
+          <R12>0</R12>
+          <R20>0</R20>
+          <R21>0</R21>
+          <R22>1</R22>
+        </CoordinateFrame>
+        <Color3uint8 name="Color3uint8">16764128</Color3uint8>
+        <int name="Duration">0</int>
+        <token name="Material">272</token>
+        <Vector3 name="size">
+          <X>8</X>
+          <Y>0.4</Y>
+          <Z>8</Z>
+        </Vector3>
+        <token name="TopSurface">0</token>
+      </Properties>
+    </Item>
+  </Item>
+</roblox>

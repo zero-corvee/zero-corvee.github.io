@@ -1,0 +1,84 @@
+{
+  "name": "Bunny Guardian Prototype",
+  "tree": {
+    "$className": "DataModel",
+
+    "ReplicatedStorage": {
+      "$className": "ReplicatedStorage",
+      "$ignoreUnknownInstances": true,
+      "BunnyGuardian": {
+        "$className": "Folder",
+        "Shared": {
+          "$path": "src/ReplicatedStorage/Shared"
+        },
+        "Remotes": {
+          "$className": "Folder",
+          "UseAbility": { "$className": "RemoteEvent" },
+          "BuyUpgrade": { "$className": "RemoteFunction" },
+          "Notify": { "$className": "RemoteEvent" }
+        },
+        "GameState": { "$className": "Configuration" }
+      }
+    },
+
+    "ServerScriptService": {
+      "$className": "ServerScriptService",
+      "$ignoreUnknownInstances": true,
+      "BunnyGuardian": {
+        "$path": "src/ServerScriptService/BunnyGuardian"
+      }
+    },
+
+    "StarterPlayer": {
+      "$className": "StarterPlayer",
+      "$ignoreUnknownInstances": true,
+      "StarterPlayerScripts": {
+        "$className": "StarterPlayerScripts",
+        "$ignoreUnknownInstances": true,
+        "BunnyGuardianClient": {
+          "$path": "src/StarterPlayer/StarterPlayerScripts/BunnyGuardianClient"
+        }
+      }
+    },
+
+    "Workspace": {
+      "$className": "Workspace",
+      "$ignoreUnknownInstances": true,
+      "BunnyGuardianGround": {
+        "$className": "Part",
+        "$properties": {
+          "Anchored": true,
+          "Locked": true,
+          "Size": [220, 2, 220],
+          "CFrame": {
+            "CFrame": {
+              "position": [0, -1, 0],
+              "orientation": [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
+            }
+          },
+          "Color": [0.42, 0.72, 0.33],
+          "Material": "Grass",
+          "TopSurface": "Smooth",
+          "BottomSurface": "Smooth"
+        }
+      },
+      "BunnyGuardianSpawn": {
+        "$className": "SpawnLocation",
+        "$properties": {
+          "Anchored": true,
+          "Size": [8, 0.4, 8],
+          "CFrame": {
+            "CFrame": {
+              "position": [0, 0.2, 22],
+              "orientation": [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
+            }
+          },
+          "Color": [1, 0.8, 0.88],
+          "Material": "SmoothPlastic",
+          "Duration": 0,
+          "TopSurface": "Smooth"
+        }
+      }
+    }
+  }
+}
