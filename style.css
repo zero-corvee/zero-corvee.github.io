@@ -183,6 +183,12 @@ p,li,dd{text-wrap:pretty}
 .profile li a{font-weight:600;white-space:nowrap;text-align:right}
 @media (max-width:600px){.profile li{flex-direction:column;gap:4px}.profile li a{text-align:left;white-space:normal}}
 
+.meta span a{color:inherit;text-decoration:underline}
+.author-box{display:flex;gap:16px;align-items:flex-start;margin:24px 0;padding:20px;border:1px solid var(--line-strong);border-radius:20px}
+.author-avatar{flex:0 0 48px;height:48px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:1.2rem;background:var(--c);color:#fff}
+.author-box h2{margin:0 0 6px}
+.author-box p{margin:0;font-size:.92rem}
+
 .small-h{font-size:1.2rem;color:var(--ink)}
 .nav-sub{font-size:.86rem}
 nav.cats a.nav-sub:not([aria-current]){color:#e11d63;box-shadow:inset 0 0 0 1px color-mix(in srgb,#e11d63 35%,transparent)}

@@ -28,6 +28,11 @@ EXTRA_FAQ = {
 for _g in GUIDES:
     _g["faq"] = list(_g["faq"]) + EXTRA_FAQ.get(_g["slug"], [])
 
+AUTHOR = "Jémuel"
+AUTHOR_BIO = ("Jémuel a créé Zéro Corvée pour gagner du temps sur les tâches répétitives de la maison. "
+              "Il sélectionne les appareils à partir des fiches des fabricants, des notices et des avis de propriétaires, "
+              "sans faire semblant de tout avoir testé. Chez lui, une fontaine à eau pour chat, un distributeur de croquettes "
+              "et une machine à pain font déjà une partie des corvées.")
 CHANGELOG = "Novembre 2026 : choix petit budget ajoutés, disponibilité des produits revérifiée sur Amazon."
 
 # À remplacer par le vrai nom de domaine une fois acheté.
@@ -353,7 +358,7 @@ def guide_page(g):
     ld = [
         {"@context": "https://schema.org", "@type": "Article", "headline": g["h1"], "description": g["desc"],
          "inLanguage": "fr-FR", "datePublished": PUBLISHED, "dateModified": UPDATED, "image": pin_image(g["slug"]),
-         "author": {"@type": "Organization", "name": SITE, "url": url("index")},
+         "author": {"@type": "Person", "name": AUTHOR, "url": url("a-propos")},
          "publisher": {"@type": "Organization", "name": SITE, "url": url("index")},
          "mainEntityOfPage": url(g["slug"])},
         crumbs_ld([("Accueil", "index"), (cat["name"], cat["key"])] + ([(sub["name"], sub["key"])] if sub else []) + [(g["short"], g["slug"])]),
@@ -409,7 +414,7 @@ def guide_page(g):
     <span class="eyebrow">Guide d'achat · {e(cat["name"])}</span>
     <h1>{e(g["h1"])}</h1>
     <p class="lede">{e(g["lede"])}</p>
-    <div class="meta"><span>Mis à jour le <time datetime="{UPDATED}">{UPDATED_FR}</time></span><span>{n} modèles comparés</span><span>Lecture : {g["read"]} min</span></div>
+    <div class="meta"><span>Par <a href="#h-author">{AUTHOR}</a></span><span>Mis à jour le <time datetime="{UPDATED}">{UPDATED_FR}</time></span><span>{n} modèles comparés</span><span>Lecture : {g["read"]} min</span></div>
     <p class="changelog">{e(CHANGELOG)}</p>
   </div>
 
@@ -473,6 +478,10 @@ def guide_page(g):
     <h2 id="h-method" class="small-h">Comment nous avons choisi</h2>
     <p>Nous comparons les fiches des fabricants, les notices et les retours de propriétaires, en privilégiant ce qui supprime réellement une tâche plutôt que les chiffres marketing. Aucune marque ne paie pour figurer ici. <a href="methode.html">Lire notre méthode</a>.</p>
   </section>
+  <aside class="author-box" aria-labelledby="h-author">
+    <span class="author-avatar" aria-hidden="true">J</span>
+    <div><h2 id="h-author" class="small-h">Qui écrit ce guide ?</h2><p>{e(AUTHOR_BIO)}</p></div>
+  </aside>
 {sources(g)}
   <section class="block" aria-labelledby="h-related">
     {sec_head(7, "À lire aussi", "h-related")}
