@@ -28,6 +28,8 @@ EXTRA_FAQ = {
 for _g in GUIDES:
     _g["faq"] = list(_g["faq"]) + EXTRA_FAQ.get(_g["slug"], [])
 
+NEW_SLUGS = {"litiere-autonettoyante-chaton"}
+CHANGELOG_NEW = "Nouvelle page publiée le 26 novembre 2026, à partir des notices des fabricants."
 AUTHOR = "Jémuel"
 AUTHOR_BIO = ("Jémuel a créé Zéro Corvée pour gagner du temps sur les tâches répétitives de la maison. "
               "Il sélectionne les appareils à partir des fiches des fabricants, des notices et des avis de propriétaires, "
@@ -237,7 +239,7 @@ BRAND_SITES = {
     "Beatbot": "https://www.beatbot.com", "Aiper": "https://www.aiper.com", "Cecotec": "https://www.cecotec.fr",
     "Miele": "https://www.miele.fr", "Bosch": "https://www.bosch-home.fr", "Samsung": "https://www.samsung.com/fr/",
     "Beko": "https://www.beko.fr", "Midea": "https://www.midea.com", "Whisker": "https://www.litter-robot.com",
-    "Petkit": "https://www.petkit.com", "PetSafe": "https://www.petsafe.com", "Dyson": "https://www.dyson.fr",
+    "Petkit": "https://www.petkit.com", "Neakasa": "https://www.neakasa.com", "PetSafe": "https://www.petsafe.com", "Dyson": "https://www.dyson.fr",
     "Rowenta": "https://www.rowenta.fr", "Tineco": "https://www.tineco.com", "Kärcher": "https://www.kaercher.com",
     "Philips": "https://www.philips.fr", "Cosori": "https://www.cosori.com", "Moulinex": "https://www.moulinex.fr",
     "Vorwerk": "https://www.vorwerk.com", "Kenwood": "https://www.kenwoodworld.com", "LG": "https://www.lg.com/fr/",
@@ -415,7 +417,7 @@ def guide_page(g):
     <h1>{e(g["h1"])}</h1>
     <p class="lede">{e(g["lede"])}</p>
     <div class="meta"><span>Par <a href="#h-author">{AUTHOR}</a></span><span>Mis à jour le <time datetime="{UPDATED}">{UPDATED_FR}</time></span><span>{n} modèles comparés</span><span>Lecture : {g["read"]} min</span></div>
-    <p class="changelog">{e(CHANGELOG)}</p>
+    <p class="changelog">{e(CHANGELOG_NEW if g["slug"] in NEW_SLUGS else CHANGELOG)}</p>
   </div>
 
   <section class="vitrine" aria-labelledby="h-top">

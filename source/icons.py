@@ -49,7 +49,7 @@ SLUG_ICON = {
 "robot-tondeuse": "mower", "robot-tondeuse-sans-fil-perimetrique": "mower", "robot-tondeuse-pas-cher": "mower",
 "robot-piscine": "pool", "robot-piscine-sans-fil": "pool", "nettoyeur-haute-pression": "pressure",
 "programmateur-arrosage": "hose", "souffleur-feuilles-batterie": "leaf", "desherbeur-electrique": "weed",
-"litiere-autonettoyante": "litter", "litiere-autonettoyante-plusieurs-chats": "litter", "litiere-autonettoyante-pas-cher": "litter",
+"litiere-autonettoyante": "litter", "litiere-autonettoyante-plusieurs-chats": "litter", "litiere-autonettoyante-pas-cher": "litter", "litiere-autonettoyante-chaton": "litter",
 "distributeur-croquettes-automatique": "bowl", "fontaine-eau-chat": "fountain", "chatiere-electronique": "catdoor",
 "lanceur-balle-automatique": "ball", "brosse-anti-poils-chat": "brush", "rouleau-anti-poils": "roller",
 "aspirateur-toilettage-chat": "groom", "anti-poils-machine-a-laver": "washer",

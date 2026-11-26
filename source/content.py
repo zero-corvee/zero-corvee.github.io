@@ -493,7 +493,8 @@ from content3 import GUIDES3
 from content4 import GUIDES4, SUBCATS
 from content5a import GUIDES5A
 from content5b import GUIDES5B
-GUIDES = GUIDES + GUIDES2 + GUIDES3 + GUIDES4 + GUIDES5A + GUIDES5B
+from content6 import GUIDES6
+GUIDES = GUIDES + GUIDES2 + GUIDES3 + GUIDES4 + GUIDES5A + GUIDES5B + GUIDES6
 
 from verified import apply
 apply(GUIDES)
