@@ -6,11 +6,36 @@ from content import GUIDES, CATEGORIES, SUBCATS
 from icons import art
 from pages import STATIC_PAGES
 
+# Questions de longue traîne ajoutées le 26/11/2026 (données fabricant des modèles du guide)
+EXTRA_FAQ = {
+    "litiere-autonettoyante": [
+        ("Peut-on l'utiliser pour un chaton ?",
+         "Pas tout de suite. Les capteurs ont un poids minimum : 1,4 kg pour le Litter-Robot 4 et 1,5 kg pour le Petkit Pura Max 2 (données fabricant). En dessous, le chat risque de ne pas être détecté. Gardez une litière classique jusqu'à ce que le chaton dépasse ce poids, puis faites la transition en douceur."),
+        ("Et pour deux chats ou plus ?",
+         "La plupart des modèles acceptent plusieurs chats, mais le bac à déchets se remplit plus vite. À partir de trois chats, prévoyez deux litières ou un modèle à grand bac : voir notre guide dédié aux litières pour plusieurs chats."),
+    ],
+    "robot-tondeuse": [
+        ("Quel robot choisir pour un terrain en pente ?",
+         "Regardez la pente maximale annoncée : 40 % pour le Husqvarna Automower 310 Mark II, 35 % pour le Gardena Sileno City et le Worx Landroid M500, 30 % pour le Segway Navimow i105E (données fabricant). Pour mesurer votre pente : dénivelé divisé par la longueur, multiplié par 100. Gardez une marge de 5 points."),
+        ("Et pour un petit jardin de moins de 500 m² ?",
+         "Inutile de viser un gros modèle. Le Gardena Sileno City, le Worx Landroid M500 et le Segway Navimow i105E sont prévus pour 500 m² ou moins. Le Navimow se passe de fil périmétrique, ce qui simplifie l'installation."),
+    ],
+    "robot-piscine": [
+        ("Peut-on laisser le robot dans l'eau en permanence ?",
+         "Ce n'est pas conseillé : la plupart des fabricants recommandent de le sortir après chaque cycle, de rincer le filtre et de le ranger à l'abri du soleil. Le chlore et les UV usent plus vite les joints et les brosses."),
+    ],
+}
+for _g in GUIDES:
+    _g["faq"] = list(_g["faq"]) + EXTRA_FAQ.get(_g["slug"], [])
+
+CHANGELOG = "Novembre 2026 : choix petit budget ajoutés, disponibilité des produits revérifiée sur Amazon."
+
 # À remplacer par le vrai nom de domaine une fois acheté.
 BASE = "https://zero-corvee.github.io"
 SITE = "Zéro Corvée"
-UPDATED = "2026-10-06"
-UPDATED_FR = "6 octobre 2026"
+PUBLISHED = "2026-10-06"
+UPDATED = "2026-11-26"
+UPDATED_FR = "26 novembre 2026"
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.environ.get("OUT", os.path.join(HERE, "site"))
@@ -44,7 +69,20 @@ def href(slug):
     return f"{slug}.html"
 
 
+def pin_image(slug):
+    """Image Pinterest du guide (pins/NN-slug.png), sinon la première épingle."""
+    import glob
+    root = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "pins")
+    hits = sorted(glob.glob(os.path.join(root, f"[0-9][0-9]-{slug}.png")))
+    if not hits:
+        hits = sorted(glob.glob(os.path.join(root, "01-*.png")))
+    return f"{BASE}/pins/{os.path.basename(hits[0])}" if hits else ""
+
+
 def head(title, desc, slug, ld, og_type="article"):
+    img = pin_image(slug)
+    og_img = (f'<meta property="og:image" content="{img}">\n<meta property="og:image:width" content="1000">\n'
+              f'<meta property="og:image:height" content="1500">\n<meta name="twitter:image" content="{img}">\n') if img else ""
     lds = "\n".join(f'<script type="application/ld+json">{json.dumps(x, ensure_ascii=False)}</script>' for x in ld)
     return f"""<!doctype html>
 <html lang="fr">
@@ -63,7 +101,7 @@ def head(title, desc, slug, ld, og_type="article"):
 <meta property="og:title" content="{e(title)}">
 <meta property="og:description" content="{e(desc)}">
 <meta property="og:url" content="{url(slug)}">
-<meta name="twitter:card" content="summary">
+{og_img}<meta name="twitter:card" content="summary_large_image">
 <meta name="theme-color" content="#f6f6f6" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0b0b0b" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -313,7 +351,7 @@ def guide_page(g):
     sub_crumb = f' › <a href="{href(sub["key"])}">{e(sub["name"])}</a>' if sub else ""
     ld = [
         {"@context": "https://schema.org", "@type": "Article", "headline": g["h1"], "description": g["desc"],
-         "inLanguage": "fr-FR", "datePublished": UPDATED, "dateModified": UPDATED,
+         "inLanguage": "fr-FR", "datePublished": PUBLISHED, "dateModified": UPDATED, "image": pin_image(g["slug"]),
          "author": {"@type": "Organization", "name": SITE, "url": url("index")},
          "publisher": {"@type": "Organization", "name": SITE, "url": url("index")},
          "mainEntityOfPage": url(g["slug"])},
@@ -371,6 +409,7 @@ def guide_page(g):
     <h1>{e(g["h1"])}</h1>
     <p class="lede">{e(g["lede"])}</p>
     <div class="meta"><span>Mis à jour le <time datetime="{UPDATED}">{UPDATED_FR}</time></span><span>{n} modèles comparés</span><span>Lecture : {g["read"]} min</span></div>
+    <p class="changelog">{e(CHANGELOG)}</p>
   </div>
 
   <section class="vitrine" aria-labelledby="h-top">
@@ -388,6 +427,10 @@ def guide_page(g):
       <thead><tr><th>Modèle</th><th>Idéal pour</th>{cols}<th>Prix</th><th><span class="sr">Acheter</span></th></tr></thead>
       <tbody>{rows}</tbody>
     </table></div>
+    <div class="profile">
+      <h3>Quel modèle selon votre situation ?</h3>
+      <ul>{"".join(f'<li><span>Pour {e(p["for"])}</span><a href="#p{i+1}">{e(p["name"])}</a></li>' for i, p in enumerate(g["products"]))}</ul>
+    </div>
   </section>
 
   <section class="block" aria-labelledby="h-products">
